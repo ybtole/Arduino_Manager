@@ -1,0 +1,246 @@
+{
+  "kits": [
+    {
+      "id": "KIT001",
+      "nome": "Kit Arduino Uno Básico",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-09T16:55:20.595383",
+      "responsavel": "brenoo",
+      "componentes": [
+        {
+          "nome": "Arduino Uno R3",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "arduino-uno.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Cabo USB",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "usb-cable.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Protoboard 830 pontos",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "breadboard.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "LEDs (vermelho)",
+          "quantidade": 10,
+          "quantidade_esperada": 10,
+          "imagem": "led.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Resistores 220Ω",
+          "quantidade": 20,
+          "quantidade_esperada": 20,
+          "imagem": "resistor.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Jumpers Macho-Macho",
+          "quantidade": 30,
+          "quantidade_esperada": 30,
+          "imagem": "jumper.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Push Button",
+          "quantidade": 5,
+          "quantidade_esperada": 5,
+          "imagem": "button.svg",
+          "estado": "bom"
+        }
+      ],
+      "historico": [
+        {
+          "data": "2026-02-09T16:54:59.711271",
+          "acao": "mudanca_status",
+          "status": "em-uso",
+          "responsavel": "brenoo",
+          "observacao": ""
+        },
+        {
+          "data": "2026-02-09T16:55:20.595383",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "brenoo",
+          "observacao": ""
+        }
+      ]
+    },
+    {
+      "id": "KIT002",
+      "nome": "Kit Arduino Sensores",
+      "status": "em-uso",
+      "ultima_atualizacao": "2024-02-09T09:30:00",
+      "responsavel": "João Silva",
+      "componentes": [
+        {
+          "nome": "Arduino Uno R3",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "arduino-uno.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Sensor Ultrassônico HC-SR04",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "ultrasonic.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Sensor DHT11",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "dht11.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Display LCD 16x2",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "lcd.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Servo Motor 9g",
+          "quantidade": 2,
+          "quantidade_esperada": 2,
+          "imagem": "servo.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Jumpers Fêmea-Macho",
+          "quantidade": 25,
+          "quantidade_esperada": 30,
+          "imagem": "jumper.svg",
+          "estado": "faltando"
+        },
+        {
+          "nome": "Resistores 10kΩ",
+          "quantidade": 10,
+          "quantidade_esperada": 10,
+          "imagem": "resistor.svg",
+          "estado": "bom"
+        }
+      ],
+      "historico": [
+        {
+          "data": "2024-02-08T14:00:00",
+          "acao": "retirada",
+          "responsavel": "João Silva",
+          "observacao": "Projeto de automação residencial"
+        }
+      ]
+    },
+    {
+      "id": "KIT003",
+      "nome": "Kit Arduino Avançado",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-09T16:50:58.114968",
+      "responsavel": "breno",
+      "componentes": [
+        {
+          "nome": "Arduino Mega 2560",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "arduino-mega.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Módulo WiFi ESP8266",
+          "quantidade": 0,
+          "quantidade_esperada": 1,
+          "imagem": "esp8266.svg",
+          "estado": "perdido"
+        },
+        {
+          "nome": "Motor DC com Driver L298N",
+          "quantidade": 2,
+          "quantidade_esperada": 2,
+          "imagem": "motor.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Sensor de Gás MQ-2",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "gas-sensor.svg",
+          "estado": "danificado"
+        },
+        {
+          "nome": "Módulo RFID RC522",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "rfid.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Matriz LED 8x8",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "imagem": "led-matrix.svg",
+          "estado": "bom"
+        },
+        {
+          "nome": "Jumpers variados",
+          "quantidade": 45,
+          "quantidade_esperada": 50,
+          "imagem": "jumper.svg",
+          "estado": "faltando"
+        },
+        {
+          "nome": "Capacitores 100µF",
+          "quantidade": 8,
+          "quantidade_esperada": 10,
+          "imagem": "capacitor.svg",
+          "estado": "faltando"
+        }
+      ],
+      "historico": [
+        {
+          "data": "2024-02-07T10:00:00",
+          "acao": "devolucao",
+          "responsavel": "Maria Santos",
+          "observacao": "Devolvido com componentes faltando. Módulo WiFi perdido."
+        },
+        {
+          "data": "2026-02-09T16:50:58.114968",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "breno",
+          "observacao": ""
+        }
+      ]
+    }
+  ],
+  "componentes_frequentemente_perdidos": [
+    {
+      "nome": "Jumpers",
+      "frequencia": 15
+    },
+    {
+      "nome": "LEDs",
+      "frequencia": 12
+    },
+    {
+      "nome": "Resistores",
+      "frequencia": 10
+    },
+    {
+      "nome": "Módulo WiFi",
+      "frequencia": 8
+    },
+    {
+      "nome": "Push Buttons",
+      "frequencia": 6
+    }
+  ]
+}

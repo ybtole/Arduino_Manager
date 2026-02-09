@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Kit Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="10" fill="url(#gradient)"/>
+                        <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95"/>
+                        <circle cx="20" cy="20" r="3" fill="white"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
+                                <stop offset="0%" stop-color="#00979D"/>
+                                <stop offset="100%" stop-color="#005F73"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div>
+                        <h1>Arduino Kit Manager</h1>
+                        <p class="subtitle">Sistema de Gerenciamento de Kits</p>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+                    <span class="sun-icon">☀️</span>
+                    <span class="moon-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- Scanner Section -->
+            <section class="scanner-section card">
+                <h2>📱 Scanner de QR Code</h2>
+                <p class="section-description">Escaneie o QR Code do kit para visualizar informações detalhadas</p>
+                <div class="scanner-buttons">
+                    <button class="scan-btn primary" onclick="scanKit('KIT001')">
+                        <span class="icon">📷</span>
+                        <div>
+                            <div class="btn-title">Escanear KIT001</div>
+                            <div class="btn-subtitle">Kit Arduino Uno Básico</div>
+                        </div>
+                    </button>
+                    <button class="scan-btn warning" onclick="scanKit('KIT002')">
+                        <span class="icon">📷</span>
+                        <div>
+                            <div class="btn-title">Escanear KIT002</div>
+                            <div class="btn-subtitle">Kit Arduino Sensores</div>
+                        </div>
+                    </button>
+                    <button class="scan-btn danger" onclick="scanKit('KIT003')">
+                        <span class="icon">📷</span>
+                        <div>
+                            <div class="btn-title">Escanear KIT003</div>
+                            <div class="btn-subtitle">Kit Arduino Avançado</div>
+                        </div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stat-card success">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalKits">0</div>
+                        <div class="stat-label">Total de Kits</div>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">🔧</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="emUso">0</div>
+                        <div class="stat-label">Em Uso</div>
+                    </div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="paraConferencia">0</div>
+                        <div class="stat-label">Para Conferência</div>
+                    </div>
+                </div>
+                <div class="stat-card primary">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="organizado">0</div>
+                        <div class="stat-label">Organizados</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Kanban Board -->
+            <section class="kanban-section card">
+                <h2>📋 Quadro Kanban</h2>
+                <div class="kanban-board">
+                    <div class="kanban-column">
+                        <div class="column-header em-uso">
+                            <h3>🔧 Em Uso</h3>
+                            <span class="count" id="countEmUso">0</span>
+                        </div>
+                        <div class="column-content" id="columnEmUso"></div>
+                    </div>
+                    
+                    <div class="kanban-column">
+                        <div class="column-header para-conferencia">
+                            <h3>⚠️ Para Conferência</h3>
+                            <span class="count" id="countParaConferencia">0</span>
+                        </div>
+                        <div class="column-content" id="columnParaConferencia"></div>
+                    </div>
+                    
+                    <div class="kanban-column">
+                        <div class="column-header organizado">
+                            <h3>✅ Organizado</h3>
+                            <span class="count" id="countOrganizado">0</span>
+                        </div>
+                        <div class="column-content" id="columnOrganizado"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Analysis Section -->
+            <section class="ai-section card">
+                <h2>🤖 Análise de IA - Componentes Perdidos</h2>
+                <p class="section-description">Análise inteligente dos componentes mais frequentemente perdidos</p>
+                <button class="btn btn-primary" onclick="carregarAnaliseIA()">
+                    <span class="icon">🔍</span>
+                    Executar Análise
+                </button>
+                <div id="aiAnalysis" class="ai-content"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de Detalhes do Kit -->
+    <div id="kitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Detalhes do Kit</h2>
+                <button class="close-btn" onclick="fecharModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo dinâmico -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
