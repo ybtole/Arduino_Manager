@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Arduino Kit Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo-container">
+                <svg width="60" height="60" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="10" fill="url(#gradient)"/>
+                    <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95"/>
+                    <circle cx="20" cy="20" r="3" fill="white"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#00979D"/>
+                            <stop offset="100%" stop-color="#005F73"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>Criar Conta</h1>
+                <p>Cadastre-se para gerenciar seus kits Arduino</p>
+            </div>
+
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" required placeholder="João Silva">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <div class="password-input">
+                        <input type="password" id="senha" name="senha" required placeholder="••••••••">
+                        <button type="button" class="toggle-password" onclick="togglePassword('senha')">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
+                    <small class="form-hint">Mínimo 8 caracteres</small>
+                </div>
+
+                <div class="password-suggestions">
+                    <button type="button" class="btn-secondary" onclick="gerarSugestoesSenha()">
+                        🔐 Gerar Senha Forte
+                    </button>
+                    <div id="senhasSugeridas" class="suggestions-list" style="display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmarSenha">Confirmar Senha</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmarSenha" name="confirmarSenha" required placeholder="••••••••">
+                        <button type="button" class="toggle-password" onclick="togglePassword('confirmarSenha')">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <span id="btnText">Criar Conta</span>
+                    <span id="btnLoader" class="loader" style="display: none;"></span>
+                </button>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Já tem uma conta? <a href="{{ url_for('login') }}" class="link-primary">Faça login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script>
+        async function gerarSugestoesSenha() {
+            try {
+                const response = await fetch('/api/auth/generate-passwords');
+                const data = await response.json();
+                
+                const container = document.getElementById('senhasSugeridas');
+                container.innerHTML = '';
+                
+                data.sugestoes.forEach(senha => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerHTML = `
+                        <code>${senha}</code>
+                        <button type="button" onclick="usarSenha('${senha}')" class="btn-usar">Usar</button>
+                    `;
+                    container.appendChild(div);
+                });
+                
+                container.style.display = 'block';
+            } catch (error) {
+                console.error('Erro ao gerar senhas:', error);
+            }
+        }
+        
+        function usarSenha(senha) {
+            document.getElementById('senha').value = senha;
+            document.getElementById('confirmarSenha').value = senha;
+            document.getElementById('senhasSugeridas').style.display = 'none';
+        }
+        
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            
+            // Validações
+            if (senha.length < 8) {
+                errorMessage.textContent = 'A senha deve ter no mínimo 8 caracteres';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            if (senha !== confirmarSenha) {
+                errorMessage.textContent = 'As senhas não coincidem';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+            errorMessage.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, email, senha })
+                });
+                
+                const data = await response.json();
+                
+                if (data.sucesso) {
+                    window.location.href = '/';
+                } else {
+                    errorMessage.textContent = data.mensagem || 'Erro ao criar conta';
+                    errorMessage.style.display = 'block';
+                    btnText.style.display = 'inline';
+                    btnLoader.style.display = 'none';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Erro ao conectar com o servidor';
+                errorMessage.style.display = 'block';
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

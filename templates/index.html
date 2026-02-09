@@ -28,10 +28,36 @@
                         <p class="subtitle">Sistema de Gerenciamento de Kits</p>
                     </div>
                 </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
-                    <span class="sun-icon">☀️</span>
-                    <span class="moon-icon">🌙</span>
-                </button>
+                
+                <div class="header-actions">
+                    <!-- Info do Usuário -->
+                    <div class="user-info" id="userInfo">
+                        <div class="user-avatar">
+                            <span id="userInitials">U</span>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Carregando...</div>
+                            <div class="user-email" id="userEmail">carregando@email.com</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão Cadastrar Kit -->
+                    <button class="btn btn-primary" onclick="abrirModalCadastroKit()">
+                        <span class="icon">➕</span>
+                        Cadastrar Kit
+                    </button>
+                    
+                    <!-- Botão Logout -->
+                    <button class="btn-logout" onclick="fazerLogout()" title="Sair">
+                        🚪
+                    </button>
+                    
+                    <!-- Toggle Tema -->
+                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+                        <span class="sun-icon">☀️</span>
+                        <span class="moon-icon">🌙</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -43,28 +69,8 @@
             <section class="scanner-section card">
                 <h2>📱 Scanner de QR Code</h2>
                 <p class="section-description">Escaneie o QR Code do kit para visualizar informações detalhadas</p>
-                <div class="scanner-buttons">
-                    <button class="scan-btn primary" onclick="scanKit('KIT001')">
-                        <span class="icon">📷</span>
-                        <div>
-                            <div class="btn-title">Escanear KIT001</div>
-                            <div class="btn-subtitle">Kit Arduino Uno Básico</div>
-                        </div>
-                    </button>
-                    <button class="scan-btn warning" onclick="scanKit('KIT002')">
-                        <span class="icon">📷</span>
-                        <div>
-                            <div class="btn-title">Escanear KIT002</div>
-                            <div class="btn-subtitle">Kit Arduino Sensores</div>
-                        </div>
-                    </button>
-                    <button class="scan-btn danger" onclick="scanKit('KIT003')">
-                        <span class="icon">📷</span>
-                        <div>
-                            <div class="btn-title">Escanear KIT003</div>
-                            <div class="btn-subtitle">Kit Arduino Avançado</div>
-                        </div>
-                    </button>
+                <div class="scanner-buttons" id="scannerButtons">
+                    <!-- Botões de scan serão carregados dinamicamente -->
                 </div>
             </section>
 
@@ -148,10 +154,60 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Detalhes do Kit</h2>
-                <button class="close-btn" onclick="fecharModal()">&times;</button>
+                <button class="close-btn" onclick="fecharModal('kitModal')">&times;</button>
             </div>
             <div class="modal-body" id="modalBody">
                 <!-- Conteúdo dinâmico -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro de Kit -->
+    <div id="cadastroKitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Cadastrar Novo Kit</h2>
+                <button class="close-btn" onclick="fecharModal('cadastroKitModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="cadastroKitForm" class="form-cadastro">
+                    <div class="form-group">
+                        <label for="nomeKit">Nome do Kit *</label>
+                        <input type="text" id="nomeKit" required placeholder="Ex: Kit Arduino Robotica">
+                    </div>
+                    
+                    <div class="componentes-section">
+                        <div class="section-header">
+                            <h3>Componentes</h3>
+                            <button type="button" class="btn btn-secondary" onclick="adicionarComponente()">
+                                ➕ Adicionar Componente
+                            </button>
+                        </div>
+                        <div id="componentesContainer"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="fecharModal('cadastroKitModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span id="btnCadastroText">Cadastrar Kit</span>
+                            <span id="btnCadastroLoader" class="loader" style="display: none;"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de QR Code -->
+    <div id="qrcodeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📱 QR Code do Kit</h2>
+                <button class="close-btn" onclick="fecharModal('qrcodeModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div id="qrcodeContainer"></div>
+                <p style="margin-top: 1rem;">Escaneie este QR Code para acessar o kit diretamente</p>
             </div>
         </div>
     </div>

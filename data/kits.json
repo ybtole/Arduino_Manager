@@ -4,8 +4,8 @@
       "id": "KIT001",
       "nome": "Kit Arduino Uno Básico",
       "status": "organizado",
-      "ultima_atualizacao": "2026-02-09T16:55:20.595383",
-      "responsavel": "brenoo",
+      "ultima_atualizacao": "2024-02-09T10:00:00",
+      "responsavel": "",
       "componentes": [
         {
           "nome": "Arduino Uno R3",
@@ -57,29 +57,14 @@
           "estado": "bom"
         }
       ],
-      "historico": [
-        {
-          "data": "2026-02-09T16:54:59.711271",
-          "acao": "mudanca_status",
-          "status": "em-uso",
-          "responsavel": "brenoo",
-          "observacao": ""
-        },
-        {
-          "data": "2026-02-09T16:55:20.595383",
-          "acao": "mudanca_status",
-          "status": "organizado",
-          "responsavel": "brenoo",
-          "observacao": ""
-        }
-      ]
+      "historico": []
     },
     {
       "id": "KIT002",
       "nome": "Kit Arduino Sensores",
       "status": "em-uso",
-      "ultima_atualizacao": "2024-02-09T09:30:00",
-      "responsavel": "João Silva",
+      "ultima_atualizacao": "2026-02-09T20:19:39.053876",
+      "responsavel": "testes",
       "componentes": [
         {
           "nome": "Arduino Uno R3",
@@ -137,15 +122,29 @@
           "acao": "retirada",
           "responsavel": "João Silva",
           "observacao": "Projeto de automação residencial"
+        },
+        {
+          "data": "2026-02-09T20:18:09.980566",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "testes",
+          "observacao": ""
+        },
+        {
+          "data": "2026-02-09T20:19:39.053876",
+          "acao": "mudanca_status",
+          "status": "em-uso",
+          "responsavel": "testes",
+          "observacao": ""
         }
       ]
     },
     {
       "id": "KIT003",
       "nome": "Kit Arduino Avançado",
-      "status": "organizado",
-      "ultima_atualizacao": "2026-02-09T16:50:58.114968",
-      "responsavel": "breno",
+      "status": "para-conferencia",
+      "ultima_atualizacao": "2026-02-09T20:15:10.413973",
+      "responsavel": "testes",
       "componentes": [
         {
           "nome": "Arduino Mega 2560",
@@ -212,35 +211,13 @@
           "observacao": "Devolvido com componentes faltando. Módulo WiFi perdido."
         },
         {
-          "data": "2026-02-09T16:50:58.114968",
+          "data": "2026-02-09T20:15:10.413973",
           "acao": "mudanca_status",
-          "status": "organizado",
-          "responsavel": "breno",
+          "status": "para-conferencia",
+          "responsavel": "testes",
           "observacao": ""
         }
       ]
-    }
-  ],
-  "componentes_frequentemente_perdidos": [
-    {
-      "nome": "Jumpers",
-      "frequencia": 15
-    },
-    {
-      "nome": "LEDs",
-      "frequencia": 12
-    },
-    {
-      "nome": "Resistores",
-      "frequencia": 10
-    },
-    {
-      "nome": "Módulo WiFi",
-      "frequencia": 8
-    },
-    {
-      "nome": "Push Buttons",
-      "frequencia": 6
     }
   ]
 }

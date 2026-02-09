@@ -1,462 +1,468 @@
-# 📦 Guia de Instalação - Arduino Kit Manager
+# 📦 Guia de Instalação Completo - Arduino Kit Manager
 
-Este guia fornece instruções passo a passo para instalar e executar o Arduino Kit Manager.
+## 🎯 Visão Geral
 
-## 📋 Índice
+Este guia fornece instruções detalhadas para instalar e configurar o Arduino Kit Manager, incluindo o sistema de autenticação, gerenciamento de kits e geração de QR Codes.
 
-1. [Requisitos do Sistema](#requisitos-do-sistema)
-2. [Instalação do Python](#instalação-do-python)
-3. [Instalação do Projeto](#instalação-do-projeto)
-4. [Primeiro Acesso](#primeiro-acesso)
-5. [Configuração para Acesso Externo](#configuração-para-acesso-externo)
-6. [Solução de Problemas](#solução-de-problemas)
-
----
-
-## 🖥️ Requisitos do Sistema
+## 📋 Requisitos do Sistema
 
 ### Mínimos
-- **Sistema Operacional**: Windows 7+, Linux, ou macOS 10.12+
-- **RAM**: 2 GB
-- **Espaço em Disco**: 200 MB
-- **Navegador**: Chrome, Firefox, Safari ou Edge (versões recentes)
+- **SO:** Windows 7+, Linux (Ubuntu 18.04+), macOS 10.12+
+- **Python:** 3.8 ou superior
+- **RAM:** 2 GB
+- **Espaço:** 200 MB
 
 ### Recomendados
-- **RAM**: 4 GB ou mais
-- **Conexão**: Internet para instalação de dependências
+- **Python:** 3.10+
+- **RAM:** 4 GB
+- **Navegador:** Chrome, Firefox, Safari ou Edge (versão recente)
 
 ---
 
-## 🐍 Instalação do Python
+## 🐍 Passo 1: Instalar Python
 
 ### Windows
 
-#### Opção 1: Download Oficial
-
 1. Acesse: https://www.python.org/downloads/
-2. Baixe Python 3.8 ou superior
-3. **IMPORTANTE**: Marque a opção "Add Python to PATH"
+2. Baixe Python 3.10+ 
+3. **IMPORTANTE:** ☑️ Marque "Add Python to PATH"
 4. Clique em "Install Now"
-5. Aguarde a instalação
 
-#### Opção 2: Microsoft Store
-
-1. Abra a Microsoft Store
-2. Pesquise por "Python 3.11"
-3. Clique em "Instalar"
-
-#### Verificar Instalação
-
-Abra o **Prompt de Comando** (cmd) e digite:
-
+**Verificar:**
 ```bash
 python --version
+pip --version
 ```
-
-Deve exibir algo como: `Python 3.11.x`
 
 ### Linux (Ubuntu/Debian)
 
 ```bash
-# Atualizar repositórios
 sudo apt update
-
-# Instalar Python 3 e pip
 sudo apt install python3 python3-pip
-
-# Verificar instalação
 python3 --version
-pip3 --version
 ```
 
 ### macOS
 
-#### Opção 1: Homebrew (Recomendado)
-
 ```bash
-# Instalar Homebrew (se ainda não tiver)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Instalar Python
+# Com Homebrew
 brew install python
 
 # Verificar
 python3 --version
 ```
 
-#### Opção 2: Download Oficial
+---
 
-1. Acesse: https://www.python.org/downloads/macos/
-2. Baixe e instale o Python 3.8+
+## 📥 Passo 2: Baixar o Projeto
+
+**Opção 1: Download ZIP**
+1. Baixe o arquivo do projeto
+2. Extraia para uma pasta (ex: `C:\arduino-kit-manager`)
+
+**Opção 2: Git Clone**
+```bash
+git clone <url-do-repositorio>
+cd arduino-kit-manager
+```
 
 ---
 
-## 📥 Instalação do Projeto
+## 📦 Passo 3: Instalar Dependências
 
-### Método 1: Download Direto
+Abra o terminal/prompt na pasta do projeto:
 
-1. **Baixe o projeto**
-   - Baixe o arquivo ZIP do projeto
-   - Extraia para uma pasta de sua preferência
+**Windows:**
+```bash
+pip install -r requirements.txt
+```
 
-2. **Abra o terminal/prompt na pasta**
-   - **Windows**: Clique com botão direito na pasta → "Abrir no Terminal"
-   - **Linux/Mac**: Navegue até a pasta pelo terminal
+**Linux/Mac:**
+```bash
+pip3 install -r requirements.txt
+```
 
-3. **Instale as dependências**
+**Dependências que serão instaladas:**
+- Flask 3.0.0 (framework web)
+- Flask-Login 0.6.3 (autenticação)
+- Flask-CORS 4.0.0 (CORS)
+- Werkzeug 3.0.1 (segurança)
+- QRCode 7.4.2 (geração de QR codes)
+- Pillow 10.1.0 (processamento de imagens)
+- itsdangerous 2.1.2 (tokens seguros)
+- scikit-learn, pandas, numpy (análise de dados)
 
-   **Windows:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+---
 
-   **Linux/Mac:**
-   ```bash
-   pip3 install -r requirements.txt
-   ```
+## 🚀 Passo 4: Executar o Sistema
 
-   Aguarde a instalação de todos os pacotes:
-   - Flask
-   - flask-cors
-   - Pillow
-   - qrcode
-   - scikit-learn
-   - pandas
-   - numpy
+### Método 1: Scripts de Inicialização (Recomendado)
 
-4. **Execute o sistema**
+**Windows:**
+- Clique duas vezes em `start.bat`
 
-   **Windows:**
-   ```bash
-   # Clique duas vezes no arquivo start.bat
-   # OU execute no terminal:
-   start.bat
-   ```
+**Linux/Mac:**
+```bash
+chmod +x start.sh
+./start.sh
+```
 
-   **Linux/Mac:**
-   ```bash
-   chmod +x start.sh
-   ./start.sh
-   ```
-
-### Método 2: Git Clone (Avançado)
+### Método 2: Manual
 
 ```bash
-# Clone o repositório
-git clone <url-do-repositorio>
-
-# Entre na pasta
-cd arduino-kit-manager
-
-# Instale dependências
-pip install -r requirements.txt
-
-# Execute
 python app.py
 ```
 
----
-
-## 🚀 Primeiro Acesso
-
-### 1. Iniciar o Servidor
-
-Após executar `start.bat` ou `start.sh`, você verá:
-
+**Você verá:**
 ```
-========================================
+==========================================
 🚀 SISTEMA DE GERENCIAMENTO DE KITS ARDUINO
-========================================
+==========================================
 📡 Servidor rodando em: http://localhost:5000
 🌐 Para acesso externo use ngrok: ngrok http 5000
-========================================
+==========================================
 ```
-
-### 2. Acessar pelo Navegador
-
-1. Abra seu navegador preferido
-2. Digite na barra de endereços:
-   ```
-   http://localhost:5000
-   ```
-3. Pressione Enter
-
-### 3. Você verá a tela inicial com:
-
-- ✅ Header com logo e botão de tema
-- 📱 Seção de scanner com 3 botões de kits
-- 📊 Estatísticas (Total, Em Uso, Para Conferência, Organizados)
-- 📋 Quadro Kanban com os kits
-- 🤖 Seção de análise de IA
-
-### 4. Teste o Sistema
-
-1. Clique em "Escanear KIT001"
-2. Visualize os componentes
-3. Experimente mudar o status
-4. Alterne entre modo claro/escuro (ícone 🌙/☀️)
 
 ---
 
-## 🌐 Configuração para Acesso Externo
+## 🌐 Passo 5: Acessar o Sistema
 
-### Por que usar ngrok?
+### Local
 
-O ngrok permite que pessoas de **qualquer lugar** acessem seu sistema através de uma URL pública, mesmo que você esteja em uma rede corporativa ou residencial.
+1. Abra seu navegador
+2. Acesse: `http://localhost:5000`
+3. Será redirecionado para a tela de login
 
-### Passo a Passo: ngrok
+### Primeiro Uso
 
-#### 1. Baixar ngrok
+**Criar sua conta:**
 
-Acesse: https://ngrok.com/download
+1. Clique em "Cadastre-se"
+2. Preencha:
+   - Nome completo
+   - Email
+   - Senha (mínimo 8 caracteres)
+3. **Dica:** Clique em "🔐 Gerar Senha Forte" para sugestões
+4. Confirme a senha
+5. Clique em "Criar Conta"
 
-Escolha a versão para seu sistema operacional.
+**Você será automaticamente logado!**
 
-#### 2. Instalar
+---
+
+## 🌍 Passo 6: Acesso Externo (ngrok)
+
+Para que outras pessoas acessem o sistema pela internet:
+
+### Instalar ngrok
 
 **Windows:**
-1. Extraia o arquivo `ngrok.exe`
-2. Coloque em uma pasta de fácil acesso (ex: `C:\ngrok\`)
-3. Adicione ao PATH (opcional)
+1. Baixe em: https://ngrok.com/download
+2. Extraia `ngrok.exe`
+3. Coloque em `C:\ngrok\`
 
 **Linux:**
 ```bash
-# Baixar
 wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
-
-# Extrair
 tar xvzf ngrok-v3-stable-linux-amd64.tgz
-
-# Mover para /usr/local/bin
 sudo mv ngrok /usr/local/bin
 ```
 
 **Mac:**
 ```bash
-# Com Homebrew
 brew install ngrok/ngrok/ngrok
 ```
 
-#### 3. Criar Conta (Gratuita)
+### Configurar ngrok
 
-1. Acesse: https://dashboard.ngrok.com/signup
-2. Crie uma conta gratuita
-3. Copie seu **authtoken**
-
-#### 4. Autenticar
-
+1. Crie conta em: https://dashboard.ngrok.com/signup
+2. Copie seu authtoken
+3. Execute:
 ```bash
 ngrok config add-authtoken SEU_TOKEN_AQUI
 ```
 
-#### 5. Executar
+### Usar ngrok
 
 **Terminal 1** (deixe rodando):
 ```bash
 python app.py
 ```
 
-**Terminal 2** (novo terminal):
+**Terminal 2**:
 ```bash
 ngrok http 5000
 ```
 
-#### 6. Compartilhar URL
-
-O ngrok mostrará algo como:
-
+**Compartilhe a URL:**
 ```
 Forwarding  https://abc123.ngrok.io -> http://localhost:5000
 ```
 
-**Compartilhe** o link `https://abc123.ngrok.io` com quem quiser acessar!
+Envie `https://abc123.ngrok.io` para quem quiser acessar!
 
-### Alternativas ao ngrok
+**Importante:** QR Codes gerados usarão automaticamente a URL do ngrok.
 
-#### 1. LocalTunnel
+---
 
-```bash
-# Instalar
-npm install -g localtunnel
+## 📱 Passo 7: Testar o Sistema
 
-# Usar
-lt --port 5000
+### 1. Cadastrar um Kit
+
+1. Clique em "➕ Cadastrar Kit" no header
+2. Digite: "Kit Arduino Básico"
+3. Adicione componentes:
+   - Arduino Uno R3 - Qtd: 1
+   - LEDs - Qtd: 10
+   - Resistores - Qtd: 20
+4. Clique em "Cadastrar Kit"
+5. **QR Code será exibido automaticamente!**
+6. Baixe o QR Code
+
+### 2. Escanear QR Code
+
+**Opção 1:** Clique no botão "Escanear KIT001"
+
+**Opção 2:** Use um app de QR Code no celular para escanear o código baixado
+
+### 3. Gerenciar Status
+
+1. Abra os detalhes do kit
+2. Clique em "🔧 Marcar como Em Uso"
+3. Adicione observação: "Retirado para aula de robótica"
+4. Veja o kit mover no Kanban!
+
+### 4. Executar Análise de IA
+
+1. Role até "🤖 Análise de IA"
+2. Clique em "🔍 Executar Análise"
+3. Veja componentes mais perdidos e recomendações
+
+### 5. Alternar Tema
+
+- Clique no ícone ☀️/🌙 no header
+- O tema será salvo automaticamente
+
+---
+
+## 🔒 Recursos de Segurança
+
+### Senhas Fortes
+
+O sistema inclui:
+- ✅ Gerador de senhas de 16 caracteres
+- ✅ Validação de força (mínimo 8 caracteres)
+- ✅ Criptografia PBKDF2 SHA256
+- ✅ Nunca armazenadas em texto puro
+
+### Recuperação de Senha
+
+1. Clique em "Esqueceu a senha?"
+2. Digite seu email
+3. Um link será gerado (simulado)
+4. Clique no link
+5. Defina nova senha
+
+**Em produção:** Configure SMTP real para envio de emails.
+
+### Sessões
+
+- Duração: 1 hora (configurável)
+- Logout automático após inatividade
+- Sessão persistente com "Lembrar-me"
+
+---
+
+## 📁 Estrutura de Dados
+
+Após a execução, serão criados:
+
+```
+data/
+├── kits.json           # Kits cadastrados
+├── users.json          # Usuários (senhas criptografadas)
+└── reset_tokens.json   # Tokens de recuperação
 ```
 
-#### 2. serveo.net (sem instalação)
+**Backup:** Copie regularmente a pasta `data/`!
 
-```bash
-ssh -R 80:localhost:5000 serveo.net
+---
+
+## ⚙️ Configurações Avançadas
+
+### Alterar Porta
+
+Edite `app.py` (última linha):
+
+```python
+app.run(debug=True, host='0.0.0.0', port=8080)  # Mude 5000 para 8080
 ```
 
-#### 3. Cloudflare Tunnel
+### Tempo de Sessão
 
-```bash
-# Instalar
-# https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/
+Edite `app.py`:
 
-cloudflared tunnel --url http://localhost:5000
+```python
+app.config['PERMANENT_SESSION_LIFETIME'] = 7200  # 2 horas (em segundos)
+```
+
+### Secret Key
+
+**IMPORTANTE EM PRODUÇÃO:** Mude a secret key:
+
+```python
+app.config['SECRET_KEY'] = 'sua-chave-secreta-aqui-muito-complexa'
+```
+
+Gere uma com:
+```python
+import secrets
+print(secrets.token_hex(32))
 ```
 
 ---
 
 ## 🐛 Solução de Problemas
 
-### ❌ "Python não é reconhecido..."
+### ❌ "Python não reconhecido"
 
-**Problema**: Python não está no PATH
+**Solução:**
+1. Reinstale Python marcando "Add to PATH"
+2. OU adicione manualmente ao PATH
 
-**Solução**:
-1. Reinstale o Python marcando "Add to PATH"
-2. OU adicione manualmente:
-   - Windows: Painel de Controle → Sistema → Variáveis de Ambiente
-   - Adicione `C:\Python3X` ao PATH
-
-### ❌ "Porta 5000 já está em uso"
-
-**Problema**: Outra aplicação está usando a porta 5000
-
-**Solução**:
-
-Edite `app.py` e mude a porta:
-
-```python
-# Última linha do arquivo
-app.run(debug=True, host='0.0.0.0', port=8080)  # ← Mude para 8080 ou outra porta
-```
-
-Acesse: `http://localhost:8080`
-
-### ❌ "ModuleNotFoundError: No module named 'flask'"
-
-**Problema**: Dependências não instaladas
-
-**Solução**:
+### ❌ "ModuleNotFoundError"
 
 ```bash
-# Windows
 pip install -r requirements.txt --force-reinstall
+```
 
-# Linux/Mac
-pip3 install -r requirements.txt --force-reinstall
+### ❌ "Port 5000 already in use"
+
+**Windows:**
+```bash
+netstat -ano | findstr :5000
+taskkill /F /PID <PID>
+```
+
+**Linux/Mac:**
+```bash
+lsof -ti:5000 | xargs kill -9
 ```
 
 ### ❌ Página em Branco
 
-**Problema**: Arquivos não carregam
+1. Limpe cache: Ctrl+Shift+Del
+2. Modo anônimo: Ctrl+Shift+N
+3. Console do navegador (F12) → veja erros
+4. Verifique se todos os arquivos estão presentes
 
-**Soluções**:
+### ❌ "Unauthorized" ao acessar /api/*
 
-1. **Limpar cache**:
-   - Chrome: Ctrl+Shift+Del → Limpar cache
-   - Firefox: Ctrl+Shift+Del → Limpar cache
+Você não está logado. Acesse `/login` primeiro.
 
-2. **Modo anônimo**:
-   - Ctrl+Shift+N (Chrome)
-   - Ctrl+Shift+P (Firefox)
+### ❌ QR Code não funciona
 
-3. **Verificar console**:
-   - F12 → Aba "Console"
-   - Veja se há erros
+- Verifique se a URL base está correta
+- Se usar ngrok, o QR será atualizado automaticamente
+- Se hospedar em servidor próprio, configure `SERVER_NAME`
 
-4. **Verificar estrutura**:
-   ```
-   arduino-kit-manager/
-   ├── templates/
-   │   └── index.html  ← Deve existir
-   └── static/
-       ├── css/
-       │   └── style.css  ← Deve existir
-       └── js/
-           └── app.js  ← Deve existir
-   ```
+### ❌ Não consigo fazer login
 
-### ❌ "Address already in use"
-
-**Problema**: Flask já está rodando
-
-**Solução**:
-
-**Windows**:
-```bash
-# Encontrar processo
-netstat -ano | findstr :5000
-
-# Matar processo (substitua PID)
-taskkill /F /PID numero_do_pid
-```
-
-**Linux/Mac**:
-```bash
-# Encontrar e matar
-lsof -ti:5000 | xargs kill -9
-```
-
-### ❌ Erro 404 nos arquivos CSS/JS
-
-**Problema**: Caminhos incorretos
-
-**Solução**:
-
-Verifique que `index.html` tem:
-
-```html
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
-```
-
-### ❌ ngrok: "authtoken not found"
-
-**Problema**: Token não configurado
-
-**Solução**:
-
-```bash
-ngrok config add-authtoken SEU_TOKEN_AQUI
-```
-
-Pegue seu token em: https://dashboard.ngrok.com/get-started/your-authtoken
+1. Verifique email/senha
+2. Veja `data/users.json` para confirmar cadastro
+3. Tente recuperar senha
 
 ---
 
-## 📞 Ainda com Problemas?
+## 📊 Recursos de Produção
 
-1. **Verifique os logs**:
-   - Leia as mensagens no terminal
-   - Procure por linhas com "ERROR"
+Para usar em produção real:
 
-2. **Console do navegador**:
-   - F12 → Console
-   - Veja erros em vermelho
+### 1. HTTPS
 
-3. **Teste com exemplo mínimo**:
-   ```bash
-   python -m flask --version
-   ```
-   Se funcionar, o Flask está OK.
+```bash
+# Com Nginx + Let's Encrypt
+sudo apt install nginx certbot
+sudo certbot --nginx
+```
 
-4. **Crie uma issue**:
-   - Descreva o problema
-   - Inclua: Sistema operacional, versão do Python, mensagem de erro completa
+### 2. Banco de Dados
+
+Substitua JSON por PostgreSQL/MySQL:
+
+```python
+# Exemplo com SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/arduino'
+```
+
+### 3. Email Real
+
+Configure SMTP (ex: SendGrid, AWS SES):
+
+```python
+import smtplib
+from email.mime.text import MIMEText
+
+def enviar_email_recuperacao(email, link):
+    msg = MIMEText(f"Clique aqui: {link}")
+    msg['Subject'] = 'Recuperação de Senha'
+    msg['From'] = 'noreply@seusite.com'
+    msg['To'] = email
+    
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login('seu-email', 'sua-senha')
+        server.send_message(msg)
+```
+
+### 4. Supervisor (Linux)
+
+Para manter rodando em produção:
+
+```bash
+sudo apt install supervisor
+
+# /etc/supervisor/conf.d/arduino-kit.conf
+[program:arduino-kit]
+command=/usr/bin/python3 /path/to/app.py
+directory=/path/to/arduino-kit-manager
+autostart=true
+autorestart=true
+```
+
+### 5. Backup Automático
+
+```bash
+# Cron job diário
+0 2 * * * cp -r /path/to/data /backups/$(date +\%Y\%m\%d)
+```
 
 ---
 
 ## ✅ Checklist de Instalação
 
 - [ ] Python 3.8+ instalado
-- [ ] pip funcionando
-- [ ] Dependências instaladas (`pip install -r requirements.txt`)
+- [ ] Dependências instaladas
 - [ ] Servidor iniciado sem erros
-- [ ] Navegador acessando `http://localhost:5000`
-- [ ] Interface carregando corretamente
-- [ ] Kits aparecendo no Kanban
-- [ ] Modal abrindo ao clicar em "Escanear"
+- [ ] Login acessível em http://localhost:5000
+- [ ] Conta criada com sucesso
+- [ ] Kit cadastrado e QR Code gerado
 - [ ] Tema claro/escuro funcionando
-
-Se todos os itens estão ✅, parabéns! 🎉
-
-O sistema está funcionando perfeitamente!
+- [ ] (Opcional) ngrok configurado
 
 ---
 
-**Desenvolvido com ❤️ para facilitar o gerenciamento de kits Arduino**
+## 📞 Suporte
+
+Se algo não funcionar:
+
+1. Verifique os logs no terminal
+2. Consulte a seção "Solução de Problemas"
+3. Veja o console do navegador (F12)
+4. Abra uma issue no GitHub
+
+---
+
+**Instalação concluída!** 🎉
+
+Agora você está pronto para gerenciar seus kits Arduino de forma profissional!

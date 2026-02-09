@@ -1,6 +1,8 @@
 // ===== CONFIGURAÇÕES GLOBAIS =====
 const API_BASE = '';
 let kitsData = [];
+let currentUser = null;
+let componenteCounter = 0;
 
 // ===== TEMA (Dark/Light Mode) =====
 const themeToggle = document.getElementById('themeToggle');
@@ -19,9 +21,60 @@ themeToggle.addEventListener('click', () => {
 
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', () => {
+    carregarUsuarioLogado();
     carregarEstatisticas();
     carregarKits();
+    
+    // Verifica se há kit na URL (#kit/KIT001)
+    const hash = window.location.hash;
+    if (hash.startsWith('#kit/')) {
+        const kitId = hash.replace('#kit/', '');
+        setTimeout(() => {
+            abrirDetalhesKit(kitId);
+        }, 500);
+    }
 });
+
+// ===== AUTENTICAÇÃO =====
+async function carregarUsuarioLogado() {
+    try {
+        const response = await fetch(`${API_BASE}/api/auth/user`);
+        if (response.ok) {
+            currentUser = await response.json();
+            atualizarInfoUsuario();
+        } else {
+            window.location.href = '/login';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar usuário:', error);
+        window.location.href = '/login';
+    }
+}
+
+function atualizarInfoUsuario() {
+    if (!currentUser) return;
+    
+    document.getElementById('userName').textContent = currentUser.nome;
+    document.getElementById('userEmail').textContent = currentUser.email;
+    
+    // Iniciais do usuário
+    const initials = currentUser.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    document.getElementById('userInitials').textContent = initials;
+}
+
+async function fazerLogout() {
+    if (!confirm('Deseja realmente sair?')) return;
+    
+    try {
+        await fetch(`${API_BASE}/api/auth/logout`, {
+            method: 'POST'
+        });
+        window.location.href = '/login';
+    } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+        window.location.href = '/login';
+    }
+}
 
 // ===== FUNÇÕES DE API =====
 async function carregarEstatisticas() {
@@ -44,9 +97,33 @@ async function carregarKits() {
         kitsData = await response.json();
         
         renderizarKanban();
+        renderizarBotoesScanner();
     } catch (error) {
         console.error('Erro ao carregar kits:', error);
     }
+}
+
+function renderizarBotoesScanner() {
+    const container = document.getElementById('scannerButtons');
+    if (!kitsData || kitsData.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary);">Nenhum kit cadastrado ainda. Clique em "Cadastrar Kit" para começar!</p>';
+        return;
+    }
+    
+    container.innerHTML = kitsData.slice(0, 6).map((kit, index) => {
+        const classes = ['primary', 'warning', 'danger', 'primary', 'warning', 'danger'];
+        const className = classes[index % classes.length];
+        
+        return `
+            <button class="scan-btn ${className}" onclick="scanKit('${kit.id}')">
+                <span class="icon">📷</span>
+                <div>
+                    <div class="btn-title">Escanear ${kit.id}</div>
+                    <div class="btn-subtitle">${kit.nome}</div>
+                </div>
+            </button>
+        `;
+    }).join('');
 }
 
 function renderizarKanban() {
@@ -167,6 +244,9 @@ function mostrarModalKit(kit) {
         <div class="qr-code-container">
             <img src="${kit.qr_code}" alt="QR Code ${kit.id}">
             <p style="margin-top: 1rem; font-weight: 600;">${kit.id}</p>
+            <button class="btn-secondary" onclick="baixarQRCode('${kit.id}')">
+                ⬇️ Baixar QR Code
+            </button>
         </div>
         
         <div style="margin: 2rem 0;">
@@ -182,6 +262,7 @@ function mostrarModalKit(kit) {
                 <p><strong>Status:</strong> ${traduzirStatus(kit.status)}</p>
                 <p><strong>Responsável:</strong> ${kit.responsavel || 'Nenhum'}</p>
                 <p><strong>Última Atualização:</strong> ${new Date(kit.ultima_atualizacao).toLocaleString('pt-BR')}</p>
+                ${kit.criado_por ? `<p><strong>Criado por:</strong> ${kit.criado_por}</p>` : ''}
             </div>
         </div>
         
@@ -192,7 +273,7 @@ function mostrarModalKit(kit) {
             </div>
         </div>
         
-        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
             <button class="btn btn-success" onclick="mudarStatus('${kit.id}', 'organizado')">
                 <span class="icon">✅</span>
                 Marcar como Organizado
@@ -205,28 +286,46 @@ function mostrarModalKit(kit) {
                 <span class="icon">🔧</span>
                 Marcar como Em Uso
             </button>
+            <button class="btn btn-danger" onclick="deletarKit('${kit.id}')">
+                <span class="icon">🗑️</span>
+                Deletar Kit
+            </button>
         </div>
     `;
     
     modal.classList.add('active');
 }
 
-function fecharModal() {
-    const modal = document.getElementById('kitModal');
+async function baixarQRCode(kitId) {
+    try {
+        const response = await fetch(`${API_BASE}/api/qrcode/${kitId}`);
+        const data = await response.json();
+        
+        // Cria link de download
+        const link = document.createElement('a');
+        link.href = data.qr_code;
+        link.download = `${kitId}_qrcode.png`;
+        link.click();
+    } catch (error) {
+        console.error('Erro ao baixar QR Code:', error);
+    }
+}
+
+function fecharModal(modalId) {
+    const modal = document.getElementById(modalId);
     modal.classList.remove('active');
 }
 
 // Fecha modal clicando fora
-document.getElementById('kitModal').addEventListener('click', (e) => {
-    if (e.target.id === 'kitModal') {
-        fecharModal();
-    }
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
 });
 
 async function mudarStatus(kitId, novoStatus) {
-    const responsavel = prompt('Digite seu nome:');
-    if (!responsavel) return;
-    
     const observacao = prompt('Observação (opcional):') || '';
     
     try {
@@ -237,7 +336,7 @@ async function mudarStatus(kitId, novoStatus) {
             },
             body: JSON.stringify({
                 status: novoStatus,
-                responsavel: responsavel,
+                responsavel: currentUser.nome,
                 observacao: observacao
             })
         });
@@ -246,7 +345,7 @@ async function mudarStatus(kitId, novoStatus) {
         
         if (result.sucesso) {
             alert('Status atualizado com sucesso!');
-            fecharModal();
+            fecharModal('kitModal');
             carregarEstatisticas();
             carregarKits();
         } else {
@@ -255,6 +354,32 @@ async function mudarStatus(kitId, novoStatus) {
     } catch (error) {
         console.error('Erro:', error);
         alert('Erro ao atualizar status');
+    }
+}
+
+async function deletarKit(kitId) {
+    if (!confirm(`Tem certeza que deseja deletar o kit ${kitId}? Esta ação não pode ser desfeita!`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/kit/${kitId}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.sucesso) {
+            alert('Kit deletado com sucesso!');
+            fecharModal('kitModal');
+            carregarEstatisticas();
+            carregarKits();
+        } else {
+            alert('Erro ao deletar kit');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao deletar kit');
     }
 }
 
@@ -312,31 +437,177 @@ async function carregarAnaliseIA() {
     }
 }
 
+// ===== CADASTRO DE KIT =====
+function abrirModalCadastroKit() {
+    const modal = document.getElementById('cadastroKitModal');
+    document.getElementById('cadastroKitForm').reset();
+    document.getElementById('componentesContainer').innerHTML = '';
+    componenteCounter = 0;
+    
+    // Adiciona 3 componentes iniciais
+    for (let i = 0; i < 3; i++) {
+        adicionarComponente();
+    }
+    
+    modal.classList.add('active');
+}
+
+function adicionarComponente() {
+    const container = document.getElementById('componentesContainer');
+    const id = ++componenteCounter;
+    
+    const div = document.createElement('div');
+    div.className = 'componente-item';
+    div.id = `componente-${id}`;
+    div.innerHTML = `
+        <input type="text" placeholder="Nome do componente" id="nome-${id}" required>
+        <input type="number" placeholder="Quantidade" id="qtd-${id}" min="1" value="1" required>
+        <select id="estado-${id}">
+            <option value="bom">Bom</option>
+            <option value="usado">Usado</option>
+        </select>
+        <button type="button" class="btn-remover" onclick="removerComponente(${id})">🗑️</button>
+    `;
+    
+    container.appendChild(div);
+}
+
+function removerComponente(id) {
+    const elemento = document.getElementById(`componente-${id}`);
+    if (elemento) {
+        elemento.remove();
+    }
+}
+
+document.getElementById('cadastroKitForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const btnText = document.getElementById('btnCadastroText');
+    const btnLoader = document.getElementById('btnCadastroLoader');
+    
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'inline-block';
+    
+    const nome = document.getElementById('nomeKit').value;
+    const componentes = [];
+    
+    // Coleta componentes
+    const componenteItems = document.querySelectorAll('.componente-item');
+    componenteItems.forEach(item => {
+        const id = item.id.split('-')[1];
+        const nomeComp = document.getElementById(`nome-${id}`).value;
+        const qtd = parseInt(document.getElementById(`qtd-${id}`).value);
+        const estado = document.getElementById(`estado-${id}`).value;
+        
+        if (nomeComp && qtd) {
+            componentes.push({
+                nome: nomeComp,
+                quantidade: qtd,
+                quantidade_esperada: qtd,
+                estado: estado,
+                imagem: ''
+            });
+        }
+    });
+    
+    if (componentes.length === 0) {
+        alert('Adicione pelo menos um componente!');
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/kit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nome: nome,
+                componentes: componentes
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.sucesso) {
+            alert(`Kit ${result.kit.id} cadastrado com sucesso!`);
+            fecharModal('cadastroKitModal');
+            carregarEstatisticas();
+            carregarKits();
+            
+            // Mostra QR Code
+            mostrarQRCode(result.kit);
+        } else {
+            alert('Erro ao cadastrar kit');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao cadastrar kit');
+    } finally {
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+    }
+});
+
+function mostrarQRCode(kit) {
+    const modal = document.getElementById('qrcodeModal');
+    const container = document.getElementById('qrcodeContainer');
+    
+    container.innerHTML = `
+        <h3>${kit.id} - ${kit.nome}</h3>
+        <img src="${kit.qr_code}" alt="QR Code ${kit.id}" style="max-width: 300px; border: 4px solid var(--border-color); border-radius: var(--radius-md); margin: 1rem auto;">
+        <p style="color: var(--text-secondary); margin: 1rem 0;">
+            QR Code gerado com sucesso! Use-o para acessar o kit rapidamente.
+        </p>
+        <button class="btn btn-primary" onclick="baixarQRCode('${kit.id}')">
+            ⬇️ Baixar QR Code
+        </button>
+    `;
+    
+    modal.classList.add('active');
+}
+
 // ===== FUNÇÕES AUXILIARES =====
 function getComponentIcon(nome) {
     const icons = {
         'Arduino Uno R3': '🔧',
         'Arduino Mega 2560': '🔧',
+        'Arduino Nano': '🔧',
         'Cabo USB': '🔌',
         'Protoboard': '📟',
+        'Breadboard': '📟',
         'LED': '💡',
         'Resistor': '🔴',
         'Jumper': '📎',
         'Push Button': '🔘',
+        'Button': '🔘',
+        'Botão': '🔘',
         'Sensor Ultrassônico': '📡',
         'Sensor DHT11': '🌡️',
+        'Sensor': '📡',
         'Display LCD': '📺',
+        'LCD': '📺',
         'Servo Motor': '⚙️',
+        'Servo': '⚙️',
+        'Motor': '🔄',
         'Módulo WiFi': '📶',
-        'Motor DC': '🔄',
+        'WiFi': '📶',
+        'ESP8266': '📶',
+        'ESP32': '📶',
         'Sensor de Gás': '💨',
         'Módulo RFID': '📱',
+        'RFID': '📱',
         'Matriz LED': '🔳',
-        'Capacitor': '🔋'
+        'Capacitor': '🔋',
+        'Bateria': '🔋',
+        'Relé': '🔌',
+        'Driver': '💿'
     };
     
     for (const [key, icon] of Object.entries(icons)) {
-        if (nome.includes(key) || nome.includes(key.toLowerCase())) {
+        if (nome.includes(key) || nome.toLowerCase().includes(key.toLowerCase())) {
             return icon;
         }
     }
@@ -351,4 +622,11 @@ function traduzirStatus(status) {
         'organizado': '✅ Organizado'
     };
     return traducoes[status] || status;
+}
+
+// Toggle password em auth
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+    input.setAttribute('type', type);
 }

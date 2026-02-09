@@ -1,0 +1,8 @@
+{
+  "1": {
+    "nome": "testes",
+    "email": "admin@sistema.com",
+    "senha_hash": "scrypt:32768:8:1$dzdOSAcI9NumWhmB$3380fe0fb44d84900c68b9f42cfcbbbfe30c335e6922aebacf44f8d9161200999919afc1acbc9ea98c7fbcad04b83e048eaa0266b71d131b4a220c8ebe49b67f",
+    "data_cadastro": "2026-02-09T20:14:40.677061"
+  }
+}
