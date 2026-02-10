@@ -4,7 +4,7 @@
       "id": "KIT001",
       "nome": "Arduino 003",
       "status": "organizado",
-      "ultima_atualizacao": "2026-02-10T00:36:18.745811",
+      "ultima_atualizacao": "2026-02-10T10:04:52.070614",
       "responsavel": "",
       "componentes": [
         {
@@ -22,10 +22,102 @@
           "acao": "criacao",
           "responsavel": "Admin",
           "observacao": "Kit criado"
+        },
+        {
+          "data": "2026-02-10T10:04:27.657383",
+          "acao": "edicao",
+          "responsavel": "Admin",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-10T10:04:52.070614",
+          "acao": "edicao",
+          "responsavel": "Admin",
+          "observacao": "Kit editado"
         }
       ],
       "criado_por": "Admin",
       "criado_em": "2026-02-10T00:36:18.745811"
+    },
+    {
+      "id": "KIT002",
+      "nome": "as",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-10T13:40:49.646764",
+      "responsavel": "",
+      "componentes": [
+        {
+          "nome": "Placa de Ensaio (Protoboard)",
+          "customName": null,
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "estado": "bom",
+          "imagem": ""
+        }
+      ],
+      "historico": [
+        {
+          "data": "2026-02-10T13:40:49.646764",
+          "acao": "criacao",
+          "responsavel": "Admin",
+          "observacao": "Kit criado"
+        }
+      ],
+      "criado_por": "Admin",
+      "criado_em": "2026-02-10T13:40:49.646764"
+    },
+    {
+      "id": "KIT003",
+      "nome": "ss",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-10T13:55:26.538797",
+      "responsavel": "Arthur",
+      "componentes": [
+        {
+          "nome": "Placa de Ensaio (Protoboard)",
+          "customName": null,
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "estado": "bom",
+          "imagem": ""
+        }
+      ],
+      "historico": [
+        {
+          "data": "2026-02-10T13:45:05.687509",
+          "acao": "criacao",
+          "responsavel": "Admin",
+          "observacao": "Kit criado"
+        },
+        {
+          "data": "2026-02-10T13:54:05.739051",
+          "acao": "mudanca_status",
+          "status": "em-uso",
+          "responsavel": "Arthur",
+          "observacao": "Peguei o arduino para teste"
+        },
+        {
+          "data": "2026-02-10T13:54:24.944880",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "Arthur",
+          "observacao": ""
+        },
+        {
+          "data": "2026-02-10T13:54:53.576682",
+          "acao": "edicao",
+          "responsavel": "Arthur",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-10T13:55:26.538797",
+          "acao": "edicao",
+          "responsavel": "Arthur",
+          "observacao": "Kit editado"
+        }
+      ],
+      "criado_por": "Admin",
+      "criado_em": "2026-02-10T13:45:05.687509"
     }
   ]
 }

@@ -4,5 +4,11 @@
     "email": "admin@sistema.com",
     "senha_hash": "scrypt:32768:8:1$IA1jimmxMHwcl8uH$ae9eeaab78df13657af0819c065c39ef73fe4ec0535efff49d6bfced8b8d2eeb285d52803a16f675a1df99fa273ac8c2b15eff513bd65d7540660af449d6b105",
     "data_cadastro": "2026-02-10T00:35:42.713468"
+  },
+  "2": {
+    "nome": "Arthur",
+    "email": "arthur@gmail.com",
+    "senha_hash": "scrypt:32768:8:1$GQTeXCtfrl0WwEYx$dc1c23a2f6bff2b2d0f388787b5a04f800bd5a449fdae7dcf4a25d9fbd290fdf29023fe5b44613fae78a19e32dfb7369166c743c78278c2352af15cdf05301e9",
+    "data_cadastro": "2026-02-10T13:53:36.226759"
   }
 }

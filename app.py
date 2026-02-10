@@ -12,6 +12,10 @@ import base64
 from collections import Counter
 import secrets
 import string
+from dotenv import load_dotenv
+
+# Carrega variáveis de ambiente do arquivo .env
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +23,9 @@ CORS(app)
 # Configurações de segurança
 app.config['SECRET_KEY'] = 'arduino-kit-manager-secret-key-2025'
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hora
+
+# URL Base para QR Codes (configurável via variável de ambiente ou .env para ngrok)
+app.config['BASE_URL'] = os.environ.get('BASE_URL', '').strip().rstrip('/')
 
 # Login Manager
 login_manager = LoginManager()
@@ -85,6 +92,13 @@ def gerar_qr_code(texto):
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
     return f"data:image/png;base64,{img_str}"
+
+def get_public_url():
+    """Retorna a URL pública configurada ou a URL da requisição atual"""
+    url = app.config['BASE_URL']
+    if url:
+        return url
+    return request.host_url.rstrip('/')
 
 def gerar_senha_forte():
     """Gera uma senha forte aleatória"""
@@ -334,8 +348,8 @@ def get_kit(kit_id):
     kit = next((k for k in kits if k['id'] == kit_id), None)
     
     if kit:
-        # Adiciona QR Code ao kit
-        kit['qr_code'] = gerar_qr_code(url_for('index', _external=True) + f'#kit/{kit_id}')
+        # Adiciona QR Code ao kit (Usa BASE_URL para ngrok se houver)
+        kit['qr_code'] = gerar_qr_code(get_public_url() + f'/#kit/{kit_id}')
         return jsonify(kit)
     else:
         return jsonify({'erro': 'Kit não encontrado'}), 404
@@ -378,7 +392,7 @@ def criar_kit():
     salvar_kits(kits)
     
     # Gera QR Code
-    novo_kit['qr_code'] = gerar_qr_code(url_for('index', _external=True) + f'#kit/{kit_id}')
+    novo_kit['qr_code'] = gerar_qr_code(get_public_url() + f'/#kit/{kit_id}')
     
     return jsonify({'sucesso': True, 'kit': novo_kit})
 
@@ -565,7 +579,7 @@ def analise_ia():
 @login_required
 def get_qrcode(kit_id):
     """Gera QR Code para um kit específico"""
-    qr_code_url = url_for('index', _external=True) + f'#kit/{kit_id}'
+    qr_code_url = get_public_url() + f'/#kit/{kit_id}'
     qr_code = gerar_qr_code(qr_code_url)
     return jsonify({'qr_code': qr_code, 'kit_id': kit_id, 'url': qr_code_url})
 
@@ -588,7 +602,11 @@ if __name__ == '__main__':
     print("🚀 SISTEMA DE GERENCIAMENTO DE KITS ARDUINO")
     print("=" * 60)
     print("📡 Servidor rodando em: http://localhost:5000")
-    print("🌐 Para acesso externo use ngrok: ngrok http 5000")
+    if app.config['BASE_URL']:
+        print(f"🌐 URL Pública (configurada): {app.config['BASE_URL']}")
+    else:
+        print("🌐 Para acesso externo (ngrok), configure a variável de ambiente BASE_URL.")
+    print("💡 Exemplo: set BASE_URL=https://xxxx.ngrok-free.app && py app.py")
     print("=" * 60)
     
     app.run(debug=True, host='0.0.0.0', port=5000)
