@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arduino Kit Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 
 <body>
@@ -32,33 +33,35 @@
                 </div>
 
                 <div class="header-actions">
-                    <!-- Info do Usuário -->
-                    <div class="user-info" id="userInfo">
-                        <div class="user-avatar">
-                            <span id="userInitials">U</span>
-                        </div>
-                        <div class="user-details">
-                            <div class="user-name" id="userName">Carregando...</div>
-                            <div class="user-email" id="userEmail">carregando@email.com</div>
-                        </div>
-                    </div>
-
                     <!-- Botão Cadastrar Kit -->
                     <button class="btn btn-primary" onclick="abrirModalCadastroKit()">
-                        <span class="icon">➕</span>
-                        Cadastrar Kit
+                        <i class="ph ph-plus"></i>
+                        <span>Cadastrar Kit</span>
                     </button>
 
-                    <!-- Botão Logout -->
-                    <button class="btn-logout" onclick="fazerLogout()" title="Sair">
-                        🚪
-                    </button>
+                    <div class="user-actions-group">
+                        <!-- Info do Usuário -->
+                        <div class="user-info" id="userInfo">
+                            <div class="user-avatar">
+                                <span id="userInitials">U</span>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name" id="userName">Carregando...</div>
+                                <div class="user-email" id="userEmail">carregando@email.com</div>
+                            </div>
+                        </div>
 
-                    <!-- Toggle Tema -->
-                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
-                        <span class="sun-icon">☀️</span>
-                        <span class="moon-icon">🌙</span>
-                    </button>
+                        <!-- Botão Logout -->
+                        <button class="btn-logout" onclick="fazerLogout()" title="Sair">
+                            <i class="ph ph-sign-out"></i>
+                        </button>
+
+                        <!-- Toggle Tema -->
+                        <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+                            <i class="ph ph-sun sun-icon"></i>
+                            <i class="ph ph-moon moon-icon"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

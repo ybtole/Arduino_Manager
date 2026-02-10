@@ -569,6 +569,10 @@ def get_qrcode(kit_id):
     qr_code = gerar_qr_code(qr_code_url)
     return jsonify({'qr_code': qr_code, 'kit_id': kit_id, 'url': qr_code_url})
 
+@app.route('/.well-known/appspecific/com.chrome.devtools.json')
+def chrome_devtools_dummy():
+    return jsonify({})
+
 if __name__ == '__main__':
     # Cria a pasta data se não existir
     os.makedirs(DATA_DIR, exist_ok=True)

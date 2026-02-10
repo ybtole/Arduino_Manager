@@ -1,1 +1,31 @@
-{}
+{
+  "kits": [
+    {
+      "id": "KIT001",
+      "nome": "Arduino 003",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-10T00:36:18.745811",
+      "responsavel": "",
+      "componentes": [
+        {
+          "nome": "Servo Motor SG90",
+          "customName": null,
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "estado": "bom",
+          "imagem": ""
+        }
+      ],
+      "historico": [
+        {
+          "data": "2026-02-10T00:36:18.745811",
+          "acao": "criacao",
+          "responsavel": "Admin",
+          "observacao": "Kit criado"
+        }
+      ],
+      "criado_por": "Admin",
+      "criado_em": "2026-02-10T00:36:18.745811"
+    }
+  ]
+}
