@@ -238,6 +238,77 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 style="color: var(--color-danger);">🗑️ Excluir Kit</h2>
+                <button class="close-btn" onclick="fecharModal('deleteConfirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmMessage" style="margin-bottom: 1.5rem;">Tem certeza que deseja deletar este kit?
+                    Esta ação não pode ser desfeita!</p>
+                <div class="form-actions" style="justify-content: center; gap: 1rem;">
+                    <button class="btn-secondary" onclick="fecharModal('deleteConfirmModal')">Cancelar</button>
+                    <button class="btn btn-danger" onclick="confirmarExclusaoKit()">
+                        Sim, Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Mensagem (Sucesso/Erro) -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content" style="max-width: 350px; text-align: center;">
+            <div class="modal-body" style="padding: 2rem 1rem;">
+                <div id="messageIcon" style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                <h3 id="messageTitle" style="margin-bottom: 0.5rem;"></h3>
+                <p id="messageBody" style="color: var(--text-secondary);"></p>
+                <div class="form-actions" style="justify-content: center; margin-top: 1.5rem;">
+                    <button class="btn btn-primary" onclick="fecharModal('messageModal')">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Todos (Kanban) -->
+    <div id="verTodosModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 id="verTodosTitle">Ver Todos</h2>
+                <button class="close-btn" onclick="fecharModal('verTodosModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="verTodosGrid" class="kanban-column-full">
+                    <!-- Cards de kits -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seletor de Emoji (Popover) -->
+    <div id="emojiPicker" class="emoji-picker" style="display: none;">
+        <div class="emoji-grid">
+            <span onclick="selecionarEmoji('💡')">💡</span>
+            <span onclick="selecionarEmoji('⚡')">⚡</span>
+            <span onclick="selecionarEmoji('🔴')">🔴</span>
+            <span onclick="selecionarEmoji('🟢')">🟢</span>
+            <span onclick="selecionarEmoji('🟡')">🟡</span>
+            <span onclick="selecionarEmoji('🔧')">🔧</span>
+            <span onclick="selecionarEmoji('🔌')">🔌</span>
+            <span onclick="selecionarEmoji('📟')">📟</span>
+            <span onclick="selecionarEmoji('🔋')">🔋</span>
+            <span onclick="selecionarEmoji('⚙️')">⚙️</span>
+            <span onclick="selecionarEmoji('📡')">📡</span>
+            <span onclick="selecionarEmoji('🌡️')">🌡️</span>
+            <span onclick="selecionarEmoji('📺')">📺</span>
+            <span onclick="selecionarEmoji('🔊')">🔊</span>
+            <span onclick="selecionarEmoji('🔘')">🔘</span>
+            <span onclick="selecionarEmoji('📦')">📦</span>
+        </div>
+    </div>
+
     <!-- Modal de QR Code -->
     <div id="qrcodeModal" class="modal">
         <div class="modal-content">

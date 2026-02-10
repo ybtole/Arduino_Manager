@@ -62,8 +62,8 @@
     {
       "id": "KIT002",
       "nome": "Kit Arduino Sensores",
-      "status": "em-uso",
-      "ultima_atualizacao": "2026-02-09T22:15:14.572766",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-09T22:41:22.574213",
       "responsavel": "testes",
       "componentes": [
         {
@@ -175,14 +175,21 @@
           "acao": "edicao",
           "responsavel": "testes",
           "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:41:22.574213",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "testes",
+          "observacao": ""
         }
       ]
     },
     {
       "id": "KIT003",
       "nome": "Kit Arduino Avançado",
-      "status": "para-conferencia",
-      "ultima_atualizacao": "2026-02-09T22:23:29.054047",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-09T22:59:14.377690",
       "responsavel": "testes",
       "componentes": [
         {
@@ -363,14 +370,33 @@
           "acao": "edicao",
           "responsavel": "testes",
           "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:41:18.970443",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "testes",
+          "observacao": ""
+        },
+        {
+          "data": "2026-02-09T22:58:44.288656",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:59:14.377690",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
         }
       ]
     },
     {
-      "id": "KIT005",
-      "nome": "asdsa",
+      "id": "KIT004",
+      "nome": "Testes",
       "status": "organizado",
-      "ultima_atualizacao": "2026-02-09T22:31:30.470453",
+      "ultima_atualizacao": "2026-02-09T23:00:09.702554",
       "responsavel": "",
       "componentes": [
         {
@@ -384,14 +410,14 @@
       ],
       "historico": [
         {
-          "data": "2026-02-09T22:31:30.470453",
+          "data": "2026-02-09T23:00:09.702554",
           "acao": "criacao",
           "responsavel": "testes",
           "observacao": "Kit criado"
         }
       ],
       "criado_por": "testes",
-      "criado_em": "2026-02-09T22:31:30.470453"
+      "criado_em": "2026-02-09T23:00:09.702554"
     }
   ]
 }

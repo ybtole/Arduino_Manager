@@ -3,7 +3,7 @@ let kitsData = [];
 let currentUser = null;
 let componentesSelecionados = [];
 let currentHistoryPage = 0;
-const HISTORY_ITEMS_PER_PAGE = 3;
+let historyItemsPerPage = 5;
 let pendingStatusChange = null;
 
 // Lista de Componentes Disponíveis
@@ -146,8 +146,8 @@ function renderizarBotoesScanner() {
             <button class="scan-btn ${className}" onclick="scanKit('${kit.id}')">
                 <span class="icon">📷</span>
                 <div>
-                    <div class="btn-title">Escanear ${kit.id}</div>
-                    <div class="btn-subtitle">${kit.nome}</div>
+                    <div class="btn-title">${kit.nome}</div>
+                    <div class="btn-subtitle">${kit.id}</div>
                 </div>
             </button>
         `;
@@ -155,17 +155,27 @@ function renderizarBotoesScanner() {
 }
 
 function renderizarKanban() {
-    const emUso = kitsData.filter(k => k.status === 'em-uso');
-    const paraConferencia = kitsData.filter(k => k.status === 'para-conferencia');
-    const organizado = kitsData.filter(k => k.status === 'organizado');
+    const statuses = ['em-uso', 'para-conferencia', 'organizado'];
+    const ids = { 'em-uso': 'columnEmUso', 'para-conferencia': 'columnParaConferencia', 'organizado': 'columnOrganizado' };
+    const counts = { 'em-uso': 'countEmUso', 'para-conferencia': 'countParaConferencia', 'organizado': 'countOrganizado' };
 
-    document.getElementById('countEmUso').textContent = emUso.length;
-    document.getElementById('countParaConferencia').textContent = paraConferencia.length;
-    document.getElementById('countOrganizado').textContent = organizado.length;
+    statuses.forEach(status => {
+        const kits = kitsData.filter(k => k.status === status);
+        document.getElementById(counts[status]).textContent = kits.length;
 
-    document.getElementById('columnEmUso').innerHTML = emUso.map(criarKitCard).join('');
-    document.getElementById('columnParaConferencia').innerHTML = paraConferencia.map(criarKitCard).join('');
-    document.getElementById('columnOrganizado').innerHTML = organizado.map(criarKitCard).join('');
+        const visibleKits = kits.slice(0, 3);
+        let html = visibleKits.map(criarKitCard).join('');
+
+        if (kits.length > 3) {
+            html += `
+                <button class="btn-ver-todos" onclick="abrirModalVerTodos('${status}')">
+                    🔍 Ver todos (${kits.length})
+                </button>
+            `;
+        }
+
+        document.getElementById(ids[status]).innerHTML = html;
+    });
 }
 
 function criarKitCard(kit) {
@@ -207,15 +217,16 @@ async function abrirDetalhesKit(kitId) {
         const kit = await response.json();
 
         if (kit.erro) {
-            alert('Kit não encontrado!');
+            showAlert('Ops!', 'Kit não encontrado!', '❌');
             return;
         }
 
+        fecharModal('verTodosModal'); // Auto-close if coming from See All
         currentHistoryPage = 0; // Reset page
         mostrarModalKit(kit);
     } catch (error) {
         console.error('Erro ao carregar detalhes do kit:', error);
-        alert('Erro ao carregar detalhes do kit');
+        showAlert('Erro', 'Não foi possível carregar os detalhes do kit.', '❌');
     }
 }
 
@@ -229,10 +240,14 @@ function mostrarModalKit(kit) {
     const componentesHTML = kit.componentes.map(comp => {
         let statusClass = 'ok';
         let statusIcon = '✓';
+        let badgeFalta = '';
 
         if (comp.quantidade < comp.quantidade_esperada) {
-            statusClass = 'warning'; // Always warn if missing, regardless of declared status
+            statusClass = 'warning';
             statusIcon = '⚠';
+            if (comp.quantidade === 0 && comp.estado !== 'perdido' && comp.estado !== 'danificado') {
+                badgeFalta = '<span class="badge-falta">⚠️ EM FALTA</span>';
+            }
         }
 
         if (comp.estado === 'perdido') {
@@ -242,22 +257,21 @@ function mostrarModalKit(kit) {
             statusClass = 'error';
             statusIcon = '✗';
         } else if (comp.estado === 'usado') {
-            // Keep warning status if missing, otherwise mark as used
             if (statusClass !== 'warning') statusClass = 'usado';
             statusIcon = '⚠️';
         }
 
-        const icon = getComponentIcon(comp.nome);
+        const icon = getComponentIcon(comp.nome, comp.icon);
 
         return `
             <div class="component-card ${statusClass}">
                 <div class="component-icon">${icon}</div>
-                <div class="component-name">${comp.nome}</div>
+                <div class="component-name">${comp.nome} ${badgeFalta}</div>
                 <div class="component-qty ${statusClass}">
                     ${comp.quantidade}/${comp.quantidade_esperada}
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                    ${statusIcon} ${comp.estado}
+                    ${statusIcon} ${traduzirEstado(comp.estado)}
                 </div>
             </div>
         `;
@@ -313,10 +327,25 @@ function mostrarModalKit(kit) {
             <div class="ai-card" id="historyContainer">
                 <!-- Histórico carregado via JS -->
             </div>
-            <div class="pagination-controls" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
-                <button class="btn-secondary btn-sm" onclick="mudarPaginaHistorico(-1)" id="btnPrevHistory">⬅️ Anterior</button>
-                <span id="historyPageIndicator" style="align-self: center;">Página 1</span>
-                <button class="btn-secondary btn-sm" onclick="mudarPaginaHistorico(1)" id="btnNextHistory">Próxima ➡️</button>
+            
+            <div class="pagination-controls-container">
+                <div class="pagination-controls">
+                    <select id="historyPerPage" onchange="mudarItemsPorPagina(this.value)" class="pagination-select">
+                        <option value="3">3 por página</option>
+                        <option value="5" selected>5 por página</option>
+                        <option value="10">10 por página</option>
+                        <option value="20">20 por página</option>
+                    </select>
+                    
+                    <button class="btn-secondary btn-sm" onclick="mudarPaginaHistorico(-1)" id="btnPrevHistory">⬅️ Anterior</button>
+                    <span id="historyPageIndicator" style="align-self: center;">Página 1</span>
+                    <button class="btn-secondary btn-sm" onclick="mudarPaginaHistorico(1)" id="btnNextHistory">Próxima ➡️</button>
+                    
+                    <div class="pagination-jump">
+                        <input type="number" id="historyJumpTo" min="1" placeholder="Pág..." class="input-jump" style="width: 60px;">
+                        <button class="btn-secondary btn-sm" onclick="irParaPaginaHistorico()">Ir</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -351,14 +380,14 @@ function renderizarPaginaHistorico() {
         return;
     }
 
-    const totalPages = Math.ceil(window.currentKitHistorico.length / HISTORY_ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(window.currentKitHistorico.length / historyItemsPerPage);
 
     // Validate page
     if (currentHistoryPage < 0) currentHistoryPage = 0;
     if (currentHistoryPage >= totalPages) currentHistoryPage = totalPages - 1;
 
-    const start = currentHistoryPage * HISTORY_ITEMS_PER_PAGE;
-    const end = start + HISTORY_ITEMS_PER_PAGE;
+    const start = currentHistoryPage * historyItemsPerPage;
+    const end = start + historyItemsPerPage;
     const items = window.currentKitHistorico.slice(start, end);
 
     container.innerHTML = items.map(h => `
@@ -381,9 +410,30 @@ function renderizarPaginaHistorico() {
     indicator.style.display = 'inline-block';
 }
 
+function irParaPaginaEspecifica(page) {
+    currentHistoryPage = page;
+    renderizarPaginaHistorico();
+}
+
 function mudarPaginaHistorico(delta) {
     currentHistoryPage += delta;
     renderizarPaginaHistorico();
+}
+
+function mudarItemsPorPagina(val) {
+    historyItemsPerPage = parseInt(val);
+    currentHistoryPage = 0;
+    renderizarPaginaHistorico();
+}
+
+function irParaPaginaHistorico() {
+    const input = document.getElementById('historyJumpTo');
+    const val = parseInt(input.value);
+    if (val > 0) {
+        currentHistoryPage = val - 1;
+        renderizarPaginaHistorico();
+        input.value = '';
+    }
 }
 
 async function baixarQRCode(kitId) {
@@ -404,6 +454,12 @@ async function baixarQRCode(kitId) {
 function fecharModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.classList.remove('active');
+
+    // Hide emoji picker if open
+    if (modalId === 'cadastroKitModal') {
+        document.getElementById('emojiPicker').style.display = 'none';
+        pendingEmojiIndex = null;
+    }
 }
 
 // Fecha modal clicando fora
@@ -465,18 +521,17 @@ async function executarMudancaStatus(kitId, novoStatus, observacao) {
             carregarEstatisticas();
             carregarKits();
         } else {
-            alert('Erro ao atualizar status');
+            showAlert('Erro', 'Erro ao atualizar status', '❌');
         }
     } catch (error) {
         console.error('Erro:', error);
-        alert('Erro ao atualizar status');
+        showAlert('Erro', 'Erro ao conectar ao servidor', '❌');
     }
 }
 
 async function deletarKit(kitId) {
-    if (!confirm(`Tem certeza que deseja deletar o kit ${kitId}? Esta ação não pode ser desfeita!`)) {
-        return;
-    }
+    const confirmado = await showConfirm(`Tem certeza que deseja deletar o kit ${kitId}? Esta ação não pode ser desfeita!`);
+    if (!confirmado) return;
 
     try {
         const response = await fetch(`${API_BASE}/api/kit/${kitId}`, {
@@ -486,16 +541,16 @@ async function deletarKit(kitId) {
         const result = await response.json();
 
         if (result.sucesso) {
-            alert('Kit deletado com sucesso!');
+            showAlert('Sucesso', 'Kit deletado com sucesso!', '🗑️');
             fecharModal('kitModal');
             carregarEstatisticas();
             carregarKits();
         } else {
-            alert('Erro ao deletar kit');
+            showAlert('Erro', 'Não foi possível deletar o kit', '❌');
         }
     } catch (error) {
         console.error('Erro:', error);
-        alert('Erro ao deletar kit');
+        showAlert('Erro', 'Erro ao conectar ao servidor', '❌');
     }
 }
 
@@ -650,9 +705,8 @@ function atualizarListaSelecionados() {
     }
 
     container.innerHTML = componentesSelecionados.map((comp, index) => {
-        const icon = getComponentIcon(comp.nome);
+        const icon = comp.icon || getComponentIcon(comp.nome);
 
-        // Se for editável (Resistor, etc), mostra input de texto. Se não, mostra o nome.
         const nomeDisplay = comp.customName !== null
             ? `<input type="text" class="input-nome-comp" placeholder="${comp.nome} (Especifique)" value="${comp.customName || ''}" onchange="atualizarNomeCustom(${index}, this.value)">`
             : `<strong>${comp.nome}</strong>`;
@@ -660,7 +714,7 @@ function atualizarListaSelecionados() {
         return `
             <div class="componente-item">
                 <div class="comp-info">
-                    <span style="font-size: 1.2rem;">${icon}</span>
+                    <span style="font-size: 1.5rem; cursor: pointer;" onclick="abrirEmojiPicker(event, ${index})" title="Mudar ícone">${icon}</span>
                     ${nomeDisplay}
                 </div>
                 
@@ -799,43 +853,33 @@ function mostrarQRCode(kit) {
 }
 
 // ===== FUNÇÕES AUXILIARES =====
-function getComponentIcon(nome) {
+function getComponentIcon(nome, icon) {
+    if (icon) return icon;
     const icons = {
-        'Arduino Uno R3': '🔧',
-        'Arduino Mega 2560': '🔧',
-        'Arduino Nano': '🔧',
-        'Cabo USB': '🔌',
+        'Arduino': '🔧',
         'Protoboard': '📟',
-        'Breadboard': '📟',
-        'LED': '💡',
-        'Resistor': '⚡',
+        'Placa de Ensaio': '📟',
+        'Cabo USB': '🔌',
         'Jumper': '📎',
-        'Push Button': '🔘',
-        'Button': '🔘',
+        'LED': '🔴',
+        'Resistor': '⚡',
+        'Potenciômetro': '🎛️',
         'Botão': '🔘',
-        'Sensor Ultrassônico': '📡',
-        'Sensor DHT11': '🌡️',
+        'Button': '🔘',
         'Sensor': '📡',
-        'Display LCD': '📺',
+        'Ultrassônico': '📡',
+        'Temperatura': '🌡️',
+        'Display': '📺',
         'LCD': '📺',
-        'Servo Motor': '⚙️',
         'Servo': '⚙️',
         'Motor': '🔄',
-        'Módulo WiFi': '📶',
-        'WiFi': '📶',
-        'ESP8266': '📶',
-        'ESP32': '📶',
-        'Sensor de Gás': '💨',
-        'Módulo RFID': '📱',
-        'RFID': '📱',
-        'Matriz LED': '🔳',
+        'Buzzer': '🔊',
         'Capacitor': '🔋',
         'Bateria': '🔋',
         'Relé': '🔌',
         'Driver': '💿'
     };
 
-    // Procura no array de componentes disponíveis também
     const compDisponivel = COMPONENTES_DISPONIVEIS.find(c => c.nome === nome);
     if (compDisponivel) return compDisponivel.icon;
 
@@ -857,9 +901,72 @@ function traduzirStatus(status) {
     return traducoes[status] || status;
 }
 
+function traduzirEstado(estado) {
+    const map = {
+        'bom': '✅ Bom',
+        'usado': '⚠️ Usado',
+        'danificado': '❌ Danificado',
+        'perdido': '❓ Perdido'
+    };
+    return map[estado] || estado;
+}
+
+// ===== HELPER FUNCTIONS ROUND 3 =====
+let pendingEmojiIndex = null;
+
+function abrirEmojiPicker(event, index) {
+    event.stopPropagation();
+    const picker = document.getElementById('emojiPicker');
+    pendingEmojiIndex = index;
+
+    picker.style.display = 'block';
+    picker.style.top = `${event.clientY}px`;
+    picker.style.left = `${event.clientX}px`;
+}
+
+function selecionarEmoji(emoji) {
+    if (pendingEmojiIndex !== null) {
+        componentesSelecionados[pendingEmojiIndex].icon = emoji;
+        atualizarListaSelecionados();
+    }
+    document.getElementById('emojiPicker').style.display = 'none';
+    pendingEmojiIndex = null;
+}
+
+function abrirModalVerTodos(status) {
+    const kits = kitsData.filter(k => k.status === status);
+    const titleMap = { 'em-uso': '🔧 Em Uso', 'para-conferencia': '⚠️ Para Conferência', 'organizado': '✅ Organizado' };
+
+    document.getElementById('verTodosTitle').textContent = `Kits: ${titleMap[status]}`;
+    document.getElementById('verTodosGrid').innerHTML = kits.map(criarKitCard).join('');
+    document.getElementById('verTodosModal').classList.add('active');
+}
+
+async function showAlert(title, message, icon = 'ℹ️') {
+    document.getElementById('messageIcon').textContent = icon;
+    document.getElementById('messageTitle').textContent = title;
+    document.getElementById('messageBody').textContent = message;
+    document.getElementById('messageModal').classList.add('active');
+}
+
+async function showConfirm(message) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('deleteConfirmModal');
+        document.getElementById('deleteConfirmMessage').textContent = message;
+
+        window.confirmarExclusaoKit = () => {
+            fecharModal('deleteConfirmModal');
+            resolve(true);
+        };
+
+        modal.classList.add('active');
+    });
+}
+
 // Toggle password em auth
 function togglePassword(inputId) {
     const input = document.getElementById(inputId);
     const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
     input.setAttribute('type', type);
 }
+
