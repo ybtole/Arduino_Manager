@@ -63,50 +63,72 @@
       "id": "KIT002",
       "nome": "Kit Arduino Sensores",
       "status": "em-uso",
-      "ultima_atualizacao": "2026-02-09T21:34:42.094156",
+      "ultima_atualizacao": "2026-02-09T22:15:14.572766",
       "responsavel": "testes",
       "componentes": [
         {
           "nome": "Arduino Uno R3",
+          "customName": null,
           "quantidade": 1,
+          "quantidade_esperada": 1,
           "estado": "bom",
-          "quantidade_esperada": 1
+          "imagem": ""
         },
         {
           "nome": "Sensor Ultrassônico HC-SR04",
+          "customName": null,
           "quantidade": 1,
+          "quantidade_esperada": 1,
           "estado": "bom",
-          "quantidade_esperada": 1
+          "imagem": ""
         },
         {
           "nome": "Sensor DHT11",
+          "customName": null,
           "quantidade": 1,
+          "quantidade_esperada": 1,
           "estado": "bom",
-          "quantidade_esperada": 1
+          "imagem": ""
         },
         {
           "nome": "Display LCD 16x2",
+          "customName": null,
           "quantidade": 1,
+          "quantidade_esperada": 1,
           "estado": "bom",
-          "quantidade_esperada": 1
+          "imagem": ""
         },
         {
           "nome": "Servo Motor 9g",
+          "customName": null,
           "quantidade": 2,
+          "quantidade_esperada": 2,
           "estado": "bom",
-          "quantidade_esperada": 2
+          "imagem": ""
         },
         {
           "nome": "Jumpers Fêmea-Macho",
+          "customName": null,
           "quantidade": 30,
+          "quantidade_esperada": 30,
           "estado": "faltando",
-          "quantidade_esperada": 30
+          "imagem": ""
         },
         {
-          "nome": "Resistores 10kΩ",
-          "quantidade": 10,
+          "nome": "Resistor 10kΩ",
+          "customName": "Resistor 10kΩ",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
           "estado": "bom",
-          "quantidade_esperada": 10
+          "imagem": ""
+        },
+        {
+          "nome": "123",
+          "customName": "123",
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "estado": "bom",
+          "imagem": ""
         }
       ],
       "historico": [
@@ -135,6 +157,24 @@
           "acao": "edicao",
           "responsavel": "testes",
           "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:13:43.558086",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:14:37.301765",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:15:14.572766",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
         }
       ]
     },
@@ -142,64 +182,80 @@
       "id": "KIT003",
       "nome": "Kit Arduino Avançado",
       "status": "para-conferencia",
-      "ultima_atualizacao": "2026-02-09T20:15:10.413973",
+      "ultima_atualizacao": "2026-02-09T22:13:23.992918",
       "responsavel": "testes",
       "componentes": [
         {
           "nome": "Arduino Mega 2560",
+          "customName": null,
           "quantidade": 1,
           "quantidade_esperada": 1,
-          "imagem": "arduino-mega.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "imagem": ""
         },
         {
           "nome": "Módulo WiFi ESP8266",
-          "quantidade": 0,
+          "customName": null,
+          "quantidade": 1,
           "quantidade_esperada": 1,
-          "imagem": "esp8266.svg",
-          "estado": "perdido"
+          "estado": "bom",
+          "imagem": ""
         },
         {
           "nome": "Motor DC com Driver L298N",
-          "quantidade": 2,
-          "quantidade_esperada": 2,
-          "imagem": "motor.svg",
-          "estado": "bom"
+          "customName": null,
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "estado": "bom",
+          "imagem": ""
         },
         {
           "nome": "Sensor de Gás MQ-2",
+          "customName": null,
           "quantidade": 1,
           "quantidade_esperada": 1,
-          "imagem": "gas-sensor.svg",
-          "estado": "danificado"
+          "estado": "bom",
+          "imagem": ""
         },
         {
           "nome": "Módulo RFID RC522",
+          "customName": null,
           "quantidade": 1,
           "quantidade_esperada": 1,
-          "imagem": "rfid.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "imagem": ""
         },
         {
           "nome": "Matriz LED 8x8",
-          "quantidade": 1,
+          "customName": null,
+          "quantidade": 0,
           "quantidade_esperada": 1,
-          "imagem": "led-matrix.svg",
-          "estado": "bom"
+          "estado": "danificado",
+          "imagem": ""
         },
         {
           "nome": "Jumpers variados",
+          "customName": null,
           "quantidade": 45,
-          "quantidade_esperada": 50,
-          "imagem": "jumper.svg",
-          "estado": "faltando"
+          "quantidade_esperada": 45,
+          "estado": "faltando",
+          "imagem": ""
         },
         {
           "nome": "Capacitores 100µF",
+          "customName": null,
           "quantidade": 8,
-          "quantidade_esperada": 10,
-          "imagem": "capacitor.svg",
-          "estado": "faltando"
+          "quantidade_esperada": 8,
+          "estado": "faltando",
+          "imagem": ""
+        },
+        {
+          "nome": "Potenciômetro",
+          "customName": null,
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "estado": "bom",
+          "imagem": ""
         }
       ],
       "historico": [
@@ -215,6 +271,74 @@
           "status": "para-conferencia",
           "responsavel": "testes",
           "observacao": ""
+        },
+        {
+          "data": "2026-02-09T21:56:26.227556",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T21:57:02.534189",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T21:57:13.140804",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T21:58:45.499231",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:06:13.208560",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:06:26.512433",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:06:38.441336",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "testes",
+          "observacao": "Arrumado os ítens"
+        },
+        {
+          "data": "2026-02-09T22:12:35.254665",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:12:58.634229",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:13:04.939164",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:13:23.992918",
+          "acao": "mudanca_status",
+          "status": "para-conferencia",
+          "responsavel": "testes",
+          "observacao": "asd"
         }
       ]
     }

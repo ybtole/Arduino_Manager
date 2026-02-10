@@ -10,14 +10,13 @@ const COMPONENTES_DISPONIVEIS = [
     { nome: 'Arduino Nano', icon: '🔧' },
     { nome: 'Placa de Ensaio (Protoboard)', icon: '📟' },
     { nome: 'Cabo USB A-B', icon: '🔌' },
-    { nome: 'Jumper Macho-Macho', icon: '📎' },
-    { nome: 'Jumper Macho-Fêmea', icon: '📎' },
+    { nome: 'Jumpers Macho-Macho', icon: '📎' },
+    { nome: 'Jumpers Macho-Fêmea', icon: '📎' },
+    { nome: 'Jumpers variados', icon: '➰' },
     { nome: 'LED Vermelho', icon: '🔴' },
     { nome: 'LED Verde', icon: '🟢' },
     { nome: 'LED Amarelo', icon: '🟡' },
-    { nome: 'Resistor 220Ω', icon: '⚡' },
-    { nome: 'Resistor 1kΩ', icon: '⚡' },
-    { nome: 'Resistor 10kΩ', icon: '⚡' },
+    { nome: 'Resistor', icon: '⚡', editavel: true },
     { nome: 'Potenciômetro', icon: '🎛️' },
     { nome: 'Push Button', icon: '🔘' },
     { nome: 'Sensor Ultrassônico HC-SR04', icon: '📡' },
@@ -26,7 +25,8 @@ const COMPONENTES_DISPONIVEIS = [
     { nome: 'Servo Motor SG90', icon: '⚙️' },
     { nome: 'Motor DC', icon: '🔄' },
     { nome: 'Buzzer Ativo', icon: '🔊' },
-    { nome: 'Módulo Relé', icon: '🔌' }
+    { nome: 'Módulo Relé', icon: '🔌' },
+    { nome: 'Outro Componente', icon: '📦', editavel: true }
 ];
 
 // ===== TEMA (Dark/Light Mode) =====
@@ -505,7 +505,9 @@ function editarKitAtual() {
     // Carrega componentes
     componentesSelecionados = kit.componentes.map(c => ({
         nome: c.nome,
+        customName: c.customName || (c.nome.startsWith('Resistor') || c.nome.startsWith('Outro') ? c.nome : null), // Tenta inferir se era custom
         quantidade: c.quantidade,
+        quantidade_esperada: c.quantidade_esperada || c.quantidade,
         estado: c.estado || 'bom'
     }));
 
@@ -532,13 +534,18 @@ function renderizarGridSelecao() {
 
 function adicionarOuIncrementarComponente(nome) {
     const index = componentesSelecionados.findIndex(c => c.nome === nome);
+    const componenteDef = COMPONENTES_DISPONIVEIS.find(c => c.nome === nome);
 
     if (index >= 0) {
-        componentesSelecionados[index].quantidade++;
+        // Toggle OFF: Remove se já estiver selecionado
+        componentesSelecionados.splice(index, 1);
     } else {
+        // Toggle ON: Adiciona
         componentesSelecionados.push({
             nome: nome,
+            customName: componenteDef.editavel ? '' : null,
             quantidade: 1,
+            quantidade_esperada: 1,
             estado: 'bom'
         });
     }
@@ -558,23 +565,31 @@ function atualizarListaSelecionados() {
     container.innerHTML = componentesSelecionados.map((comp, index) => {
         const icon = getComponentIcon(comp.nome);
 
+        // Se for editável (Resistor, etc), mostra input de texto. Se não, mostra o nome.
+        const nomeDisplay = comp.customName !== null
+            ? `<input type="text" class="input-nome-comp" placeholder="${comp.nome} (Especifique)" value="${comp.customName || ''}" onchange="atualizarNomeCustom(${index}, this.value)">`
+            : `<strong>${comp.nome}</strong>`;
+
         return `
             <div class="componente-item">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="comp-info">
                     <span style="font-size: 1.2rem;">${icon}</span>
-                    <strong>${comp.nome}</strong>
+                    ${nomeDisplay}
                 </div>
                 
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <input type="number" 
-                           value="${comp.quantidade}" 
-                           min="1" 
-                           style="width: 60px; padding: 0.25rem;"
-                           onchange="atualizarQuantidade(${index}, this.value)">
-                           
-                    <select style="padding: 0.25rem;" onchange="atualizarEstado(${index}, this.value)">
-                        <option value="bom" ${comp.estado === 'bom' ? 'selected' : ''}>Bom</option>
-                        <option value="usado" ${comp.estado === 'usado' ? 'selected' : ''}>Usado</option>
+                <div class="comp-controls">
+                    <div class="qty-control" title="Quantidade Atual / Esperada">
+                        <span>Qtd:</span>
+                        <input type="number" value="${comp.quantidade}" min="0" class="input-qty" onchange="atualizarQuantidade(${index}, this.value)">
+                        <span>/</span>
+                        <input type="number" value="${comp.quantidade_esperada || comp.quantidade}" min="1" class="input-qty" onchange="atualizarQtdEsperada(${index}, this.value)">
+                    </div>
+
+                    <select class="input-status" onchange="atualizarEstado(${index}, this.value)">
+                        <option value="bom" ${comp.estado === 'bom' ? 'selected' : ''}>✅ Bom</option>
+                        <option value="usado" ${comp.estado === 'usado' ? 'selected' : ''}>⚠️ Usado</option>
+                        <option value="danificado" ${comp.estado === 'danificado' ? 'selected' : ''}>❌ Danificado</option>
+                        <option value="perdido" ${comp.estado === 'perdido' ? 'selected' : ''}>❓ Perdido</option>
                     </select>
                     
                     <button type="button" class="btn-remover" onclick="removerComponente(${index})">🗑️</button>
@@ -584,10 +599,21 @@ function atualizarListaSelecionados() {
     }).join('');
 }
 
+function atualizarNomeCustom(index, valor) {
+    componentesSelecionados[index].customName = valor;
+}
+
 function atualizarQuantidade(index, valor) {
-    if (valor < 1) valor = 1;
+    if (valor < 0) valor = 0;
     componentesSelecionados[index].quantidade = parseInt(valor);
 }
+
+function atualizarQtdEsperada(index, valor) {
+    if (valor < 1) valor = 1;
+    componentesSelecionados[index].quantidade_esperada = parseInt(valor);
+}
+
+
 
 function atualizarEstado(index, estado) {
     componentesSelecionados[index].estado = estado;
@@ -618,10 +644,15 @@ document.getElementById('cadastroKitForm').addEventListener('submit', async (e) 
         return;
     }
 
-    // Prepara componentes (adiciona quantidade_esperada se for novo)
+    // Prepara componentes
     const componentesFinais = componentesSelecionados.map(c => ({
-        ...c,
-        quantidade_esperada: c.quantidade_esperada || c.quantidade
+        // Se tiver customName, usa ele como nome final ou concatena
+        nome: c.customName ? c.customName : c.nome,
+        customName: c.customName, // Salva para poder editar depois
+        quantidade: c.quantidade,
+        quantidade_esperada: c.quantidade_esperada || 1,
+        estado: c.estado,
+        imagem: ''
     }));
 
     try {
