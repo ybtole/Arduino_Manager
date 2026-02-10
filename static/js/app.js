@@ -1,8 +1,33 @@
-// ===== CONFIGURAÇÕES GLOBAIS =====
 const API_BASE = '';
 let kitsData = [];
 let currentUser = null;
-let componenteCounter = 0;
+let componentesSelecionados = [];
+
+// Lista de Componentes Disponíveis
+const COMPONENTES_DISPONIVEIS = [
+    { nome: 'Arduino Uno R3', icon: '🔧' },
+    { nome: 'Arduino Mega 2560', icon: '🔧' },
+    { nome: 'Arduino Nano', icon: '🔧' },
+    { nome: 'Placa de Ensaio (Protoboard)', icon: '📟' },
+    { nome: 'Cabo USB A-B', icon: '🔌' },
+    { nome: 'Jumper Macho-Macho', icon: '📎' },
+    { nome: 'Jumper Macho-Fêmea', icon: '📎' },
+    { nome: 'LED Vermelho', icon: '🔴' },
+    { nome: 'LED Verde', icon: '🟢' },
+    { nome: 'LED Amarelo', icon: '🟡' },
+    { nome: 'Resistor 220Ω', icon: '⚡' },
+    { nome: 'Resistor 1kΩ', icon: '⚡' },
+    { nome: 'Resistor 10kΩ', icon: '⚡' },
+    { nome: 'Potenciômetro', icon: '🎛️' },
+    { nome: 'Push Button', icon: '🔘' },
+    { nome: 'Sensor Ultrassônico HC-SR04', icon: '📡' },
+    { nome: 'Sensor de Temperatura DHT11', icon: '🌡️' },
+    { nome: 'Display LCD 16x2', icon: '📺' },
+    { nome: 'Servo Motor SG90', icon: '⚙️' },
+    { nome: 'Motor DC', icon: '🔄' },
+    { nome: 'Buzzer Ativo', icon: '🔊' },
+    { nome: 'Módulo Relé', icon: '🔌' }
+];
 
 // ===== TEMA (Dark/Light Mode) =====
 const themeToggle = document.getElementById('themeToggle');
@@ -24,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarUsuarioLogado();
     carregarEstatisticas();
     carregarKits();
-    
+
     // Verifica se há kit na URL (#kit/KIT001)
     const hash = window.location.hash;
     if (hash.startsWith('#kit/')) {
@@ -53,10 +78,10 @@ async function carregarUsuarioLogado() {
 
 function atualizarInfoUsuario() {
     if (!currentUser) return;
-    
+
     document.getElementById('userName').textContent = currentUser.nome;
     document.getElementById('userEmail').textContent = currentUser.email;
-    
+
     // Iniciais do usuário
     const initials = currentUser.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     document.getElementById('userInitials').textContent = initials;
@@ -64,7 +89,7 @@ function atualizarInfoUsuario() {
 
 async function fazerLogout() {
     if (!confirm('Deseja realmente sair?')) return;
-    
+
     try {
         await fetch(`${API_BASE}/api/auth/logout`, {
             method: 'POST'
@@ -81,7 +106,7 @@ async function carregarEstatisticas() {
     try {
         const response = await fetch(`${API_BASE}/api/estatisticas`);
         const stats = await response.json();
-        
+
         document.getElementById('totalKits').textContent = stats.total_kits;
         document.getElementById('emUso').textContent = stats.em_uso;
         document.getElementById('paraConferencia').textContent = stats.para_conferencia;
@@ -95,7 +120,7 @@ async function carregarKits() {
     try {
         const response = await fetch(`${API_BASE}/api/kits`);
         kitsData = await response.json();
-        
+
         renderizarKanban();
         renderizarBotoesScanner();
     } catch (error) {
@@ -109,11 +134,11 @@ function renderizarBotoesScanner() {
         container.innerHTML = '<p style="color: var(--text-secondary);">Nenhum kit cadastrado ainda. Clique em "Cadastrar Kit" para começar!</p>';
         return;
     }
-    
+
     container.innerHTML = kitsData.slice(0, 6).map((kit, index) => {
         const classes = ['primary', 'warning', 'danger', 'primary', 'warning', 'danger'];
         const className = classes[index % classes.length];
-        
+
         return `
             <button class="scan-btn ${className}" onclick="scanKit('${kit.id}')">
                 <span class="icon">📷</span>
@@ -130,27 +155,27 @@ function renderizarKanban() {
     const emUso = kitsData.filter(k => k.status === 'em-uso');
     const paraConferencia = kitsData.filter(k => k.status === 'para-conferencia');
     const organizado = kitsData.filter(k => k.status === 'organizado');
-    
+
     document.getElementById('countEmUso').textContent = emUso.length;
     document.getElementById('countParaConferencia').textContent = paraConferencia.length;
     document.getElementById('countOrganizado').textContent = organizado.length;
-    
+
     document.getElementById('columnEmUso').innerHTML = emUso.map(criarKitCard).join('');
     document.getElementById('columnParaConferencia').innerHTML = paraConferencia.map(criarKitCard).join('');
     document.getElementById('columnOrganizado').innerHTML = organizado.map(criarKitCard).join('');
 }
 
 function criarKitCard(kit) {
-    const componentesComProblema = kit.componentes.filter(c => 
+    const componentesComProblema = kit.componentes.filter(c =>
         c.estado === 'perdido' || c.estado === 'danificado' || c.quantidade < c.quantidade_esperada
     );
-    
-    const statusBadge = componentesComProblema.length === 0 
+
+    const statusBadge = componentesComProblema.length === 0
         ? '<span class="kit-badge badge-ok">✓ Completo</span>'
         : `<span class="kit-badge badge-warning">⚠️ ${componentesComProblema.length} problema(s)</span>`;
-    
+
     const ultimaAtualizacao = new Date(kit.ultima_atualizacao).toLocaleString('pt-BR');
-    
+
     return `
         <div class="kit-card" onclick="abrirDetalhesKit('${kit.id}')">
             <div class="kit-card-header">
@@ -177,12 +202,12 @@ async function abrirDetalhesKit(kitId) {
     try {
         const response = await fetch(`${API_BASE}/api/kit/${kitId}`);
         const kit = await response.json();
-        
+
         if (kit.erro) {
             alert('Kit não encontrado!');
             return;
         }
-        
+
         mostrarModalKit(kit);
     } catch (error) {
         console.error('Erro ao carregar detalhes do kit:', error);
@@ -194,13 +219,13 @@ function mostrarModalKit(kit) {
     const modal = document.getElementById('kitModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
-    
+
     modalTitle.textContent = `${kit.id} - ${kit.nome}`;
-    
+
     const componentesHTML = kit.componentes.map(comp => {
         let statusClass = 'ok';
         let statusIcon = '✓';
-        
+
         if (comp.estado === 'perdido') {
             statusClass = 'error';
             statusIcon = '✗';
@@ -211,9 +236,9 @@ function mostrarModalKit(kit) {
             statusClass = 'warning';
             statusIcon = '⚠';
         }
-        
+
         const icon = getComponentIcon(comp.nome);
-        
+
         return `
             <div class="component-card ${statusClass}">
                 <div class="component-icon">${icon}</div>
@@ -227,8 +252,8 @@ function mostrarModalKit(kit) {
             </div>
         `;
     }).join('');
-    
-    const historicoHTML = kit.historico && kit.historico.length > 0 
+
+    const historicoHTML = kit.historico && kit.historico.length > 0
         ? kit.historico.map(h => `
             <div class="ai-item">
                 <div>
@@ -239,7 +264,7 @@ function mostrarModalKit(kit) {
             </div>
         `).join('')
         : '<p style="color: var(--text-secondary);">Nenhum histórico registrado</p>';
-    
+
     modalBody.innerHTML = `
         <div class="qr-code-container">
             <img src="${kit.qr_code}" alt="QR Code ${kit.id}">
@@ -286,13 +311,17 @@ function mostrarModalKit(kit) {
                 <span class="icon">🔧</span>
                 Marcar como Em Uso
             </button>
+            <button class="btn btn-primary" onclick="editarKitAtual()">
+                <span class="icon">✏️</span>
+                Editar Kit
+            </button>
             <button class="btn btn-danger" onclick="deletarKit('${kit.id}')">
                 <span class="icon">🗑️</span>
                 Deletar Kit
             </button>
         </div>
     `;
-    
+
     modal.classList.add('active');
 }
 
@@ -300,7 +329,7 @@ async function baixarQRCode(kitId) {
     try {
         const response = await fetch(`${API_BASE}/api/qrcode/${kitId}`);
         const data = await response.json();
-        
+
         // Cria link de download
         const link = document.createElement('a');
         link.href = data.qr_code;
@@ -327,7 +356,7 @@ document.querySelectorAll('.modal').forEach(modal => {
 
 async function mudarStatus(kitId, novoStatus) {
     const observacao = prompt('Observação (opcional):') || '';
-    
+
     try {
         const response = await fetch(`${API_BASE}/api/kit/${kitId}/status`, {
             method: 'PUT',
@@ -340,9 +369,9 @@ async function mudarStatus(kitId, novoStatus) {
                 observacao: observacao
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.sucesso) {
             alert('Status atualizado com sucesso!');
             fecharModal('kitModal');
@@ -361,14 +390,14 @@ async function deletarKit(kitId) {
     if (!confirm(`Tem certeza que deseja deletar o kit ${kitId}? Esta ação não pode ser desfeita!`)) {
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE}/api/kit/${kitId}`, {
             method: 'DELETE'
         });
-        
+
         const result = await response.json();
-        
+
         if (result.sucesso) {
             alert('Kit deletado com sucesso!');
             fecharModal('kitModal');
@@ -387,11 +416,11 @@ async function deletarKit(kitId) {
 async function carregarAnaliseIA() {
     const container = document.getElementById('aiAnalysis');
     container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">🔄 Analisando dados...</p>';
-    
+
     try {
         const response = await fetch(`${API_BASE}/api/analise-ia`);
         const analise = await response.json();
-        
+
         const componentesHTML = analise.componentes_mais_perdidos
             .map(c => `
                 <div class="ai-item">
@@ -399,7 +428,7 @@ async function carregarAnaliseIA() {
                     <span class="priority-badge priority-alta">${c.frequencia}x perdido</span>
                 </div>
             `).join('');
-        
+
         const recomendacoesHTML = analise.recomendacoes.length > 0
             ? analise.recomendacoes.map(r => `
                 <div class="ai-item">
@@ -411,7 +440,7 @@ async function carregarAnaliseIA() {
                 </div>
             `).join('')
             : '<p style="color: var(--text-secondary);">Nenhuma recomendação no momento</p>';
-        
+
         container.innerHTML = `
             <div class="ai-card">
                 <div class="ai-title">🎯 Componentes Mais Perdidos</div>
@@ -438,113 +467,195 @@ async function carregarAnaliseIA() {
 }
 
 // ===== CADASTRO DE KIT =====
+// ===== CADASTRO E EDIÇÃO DE KIT =====
 function abrirModalCadastroKit() {
     const modal = document.getElementById('cadastroKitModal');
-    document.getElementById('cadastroKitForm').reset();
-    document.getElementById('componentesContainer').innerHTML = '';
-    componenteCounter = 0;
-    
-    // Adiciona 3 componentes iniciais
-    for (let i = 0; i < 3; i++) {
-        adicionarComponente();
-    }
-    
+    const form = document.getElementById('cadastroKitForm');
+
+    // Reset form
+    form.reset();
+    document.getElementById('kitIdEditar').value = '';
+    document.getElementById('btnCadastroText').textContent = 'Cadastrar Kit';
+    document.querySelector('#cadastroKitModal h2').textContent = '➕ Cadastrar Novo Kit';
+
+    // Reset componentes
+    componentesSelecionados = [];
+    renderizarGridSelecao();
+    atualizarListaSelecionados();
+
     modal.classList.add('active');
 }
 
-function adicionarComponente() {
-    const container = document.getElementById('componentesContainer');
-    const id = ++componenteCounter;
-    
-    const div = document.createElement('div');
-    div.className = 'componente-item';
-    div.id = `componente-${id}`;
-    div.innerHTML = `
-        <input type="text" placeholder="Nome do componente" id="nome-${id}" required>
-        <input type="number" placeholder="Quantidade" id="qtd-${id}" min="1" value="1" required>
-        <select id="estado-${id}">
-            <option value="bom">Bom</option>
-            <option value="usado">Usado</option>
-        </select>
-        <button type="button" class="btn-remover" onclick="removerComponente(${id})">🗑️</button>
-    `;
-    
-    container.appendChild(div);
+function editarKitAtual() {
+    const modalDetalhes = document.getElementById('kitModal');
+    const kitId = document.getElementById('modalTitle').textContent.split(' - ')[0];
+    const kit = kitsData.find(k => k.id === kitId);
+
+    if (!kit) return;
+
+    // Fecha modal de detalhes e abre de cadastro
+    modalDetalhes.classList.remove('active');
+
+    // Preenche dados
+    document.getElementById('kitIdEditar').value = kit.id;
+    document.getElementById('nomeKit').value = kit.nome;
+    document.getElementById('btnCadastroText').textContent = 'Salvar Alterações';
+    document.querySelector('#cadastroKitModal h2').textContent = '✏️ Editar Kit';
+
+    // Carrega componentes
+    componentesSelecionados = kit.componentes.map(c => ({
+        nome: c.nome,
+        quantidade: c.quantidade,
+        estado: c.estado || 'bom'
+    }));
+
+    renderizarGridSelecao();
+    atualizarListaSelecionados();
+
+    document.getElementById('cadastroKitModal').classList.add('active');
 }
 
-function removerComponente(id) {
-    const elemento = document.getElementById(`componente-${id}`);
-    if (elemento) {
-        elemento.remove();
+function renderizarGridSelecao() {
+    const container = document.getElementById('componentSelectionGrid');
+    container.innerHTML = COMPONENTES_DISPONIVEIS.map(comp => {
+        const selecionado = componentesSelecionados.find(c => c.nome === comp.nome);
+        const classeSelecionado = selecionado ? 'selected' : '';
+
+        return `
+            <div class="component-option ${classeSelecionado}" onclick="adicionarOuIncrementarComponente('${comp.nome}')">
+                <div class="component-option-icon">${comp.icon}</div>
+                <div class="component-option-name">${comp.nome}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function adicionarOuIncrementarComponente(nome) {
+    const index = componentesSelecionados.findIndex(c => c.nome === nome);
+
+    if (index >= 0) {
+        componentesSelecionados[index].quantidade++;
+    } else {
+        componentesSelecionados.push({
+            nome: nome,
+            quantidade: 1,
+            estado: 'bom'
+        });
     }
+
+    renderizarGridSelecao();
+    atualizarListaSelecionados();
+}
+
+function atualizarListaSelecionados() {
+    const container = document.getElementById('selectedComponentsList');
+
+    if (componentesSelecionados.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-size: 0.9rem;">Nenhum componente selecionado</p>';
+        return;
+    }
+
+    container.innerHTML = componentesSelecionados.map((comp, index) => {
+        const icon = getComponentIcon(comp.nome);
+
+        return `
+            <div class="componente-item">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.2rem;">${icon}</span>
+                    <strong>${comp.nome}</strong>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="number" 
+                           value="${comp.quantidade}" 
+                           min="1" 
+                           style="width: 60px; padding: 0.25rem;"
+                           onchange="atualizarQuantidade(${index}, this.value)">
+                           
+                    <select style="padding: 0.25rem;" onchange="atualizarEstado(${index}, this.value)">
+                        <option value="bom" ${comp.estado === 'bom' ? 'selected' : ''}>Bom</option>
+                        <option value="usado" ${comp.estado === 'usado' ? 'selected' : ''}>Usado</option>
+                    </select>
+                    
+                    <button type="button" class="btn-remover" onclick="removerComponente(${index})">🗑️</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function atualizarQuantidade(index, valor) {
+    if (valor < 1) valor = 1;
+    componentesSelecionados[index].quantidade = parseInt(valor);
+}
+
+function atualizarEstado(index, estado) {
+    componentesSelecionados[index].estado = estado;
+}
+
+function removerComponente(index) {
+    componentesSelecionados.splice(index, 1);
+    renderizarGridSelecao();
+    atualizarListaSelecionados();
 }
 
 document.getElementById('cadastroKitForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const btnText = document.getElementById('btnCadastroText');
     const btnLoader = document.getElementById('btnCadastroLoader');
-    
+    const kitId = document.getElementById('kitIdEditar').value;
+
     btnText.style.display = 'none';
     btnLoader.style.display = 'inline-block';
-    
+
     const nome = document.getElementById('nomeKit').value;
-    const componentes = [];
-    
-    // Coleta componentes
-    const componenteItems = document.querySelectorAll('.componente-item');
-    componenteItems.forEach(item => {
-        const id = item.id.split('-')[1];
-        const nomeComp = document.getElementById(`nome-${id}`).value;
-        const qtd = parseInt(document.getElementById(`qtd-${id}`).value);
-        const estado = document.getElementById(`estado-${id}`).value;
-        
-        if (nomeComp && qtd) {
-            componentes.push({
-                nome: nomeComp,
-                quantidade: qtd,
-                quantidade_esperada: qtd,
-                estado: estado,
-                imagem: ''
-            });
-        }
-    });
-    
-    if (componentes.length === 0) {
+
+    if (componentesSelecionados.length === 0) {
         alert('Adicione pelo menos um componente!');
         btnText.style.display = 'inline';
         btnLoader.style.display = 'none';
         return;
     }
-    
+
+    // Prepara componentes (adiciona quantidade_esperada se for novo)
+    const componentesFinais = componentesSelecionados.map(c => ({
+        ...c,
+        quantidade_esperada: c.quantidade_esperada || c.quantidade
+    }));
+
     try {
-        const response = await fetch(`${API_BASE}/api/kit`, {
-            method: 'POST',
+        const url = kitId ? `${API_BASE}/api/kit/${kitId}` : `${API_BASE}/api/kit`;
+        const method = kitId ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 nome: nome,
-                componentes: componentes
+                componentes: componentesFinais
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.sucesso) {
-            alert(`Kit ${result.kit.id} cadastrado com sucesso!`);
+            alert(`Kit ${kitId ? 'atualizado' : 'cadastrado'} com sucesso!`);
             fecharModal('cadastroKitModal');
             carregarEstatisticas();
             carregarKits();
-            
-            // Mostra QR Code
-            mostrarQRCode(result.kit);
+
+            if (!kitId) {
+                mostrarQRCode(result.kit);
+            }
         } else {
-            alert('Erro ao cadastrar kit');
+            alert('Erro ao salvar kit: ' + (result.mensagem || 'Erro desconhecido'));
         }
     } catch (error) {
         console.error('Erro:', error);
-        alert('Erro ao cadastrar kit');
+        alert('Erro ao conectar com o servidor');
     } finally {
         btnText.style.display = 'inline';
         btnLoader.style.display = 'none';
@@ -554,7 +665,7 @@ document.getElementById('cadastroKitForm').addEventListener('submit', async (e) 
 function mostrarQRCode(kit) {
     const modal = document.getElementById('qrcodeModal');
     const container = document.getElementById('qrcodeContainer');
-    
+
     container.innerHTML = `
         <h3>${kit.id} - ${kit.nome}</h3>
         <img src="${kit.qr_code}" alt="QR Code ${kit.id}" style="max-width: 300px; border: 4px solid var(--border-color); border-radius: var(--radius-md); margin: 1rem auto;">
@@ -565,7 +676,7 @@ function mostrarQRCode(kit) {
             ⬇️ Baixar QR Code
         </button>
     `;
-    
+
     modal.classList.add('active');
 }
 
@@ -605,13 +716,17 @@ function getComponentIcon(nome) {
         'Relé': '🔌',
         'Driver': '💿'
     };
-    
+
+    // Procura no array de componentes disponíveis também
+    const compDisponivel = COMPONENTES_DISPONIVEIS.find(c => c.nome === nome);
+    if (compDisponivel) return compDisponivel.icon;
+
     for (const [key, icon] of Object.entries(icons)) {
         if (nome.includes(key) || nome.toLowerCase().includes(key.toLowerCase())) {
             return icon;
         }
     }
-    
+
     return '📦';
 }
 

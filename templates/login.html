@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Arduino Kit Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 </head>
+
 <body>
     <div class="auth-container">
         <div class="auth-card">
             <div class="logo-container">
                 <svg width="60" height="60" viewBox="0 0 40 40" fill="none">
-                    <rect width="40" height="40" rx="10" fill="url(#gradient)"/>
-                    <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95"/>
-                    <circle cx="20" cy="20" r="3" fill="white"/>
+                    <rect width="40" height="40" rx="10" fill="url(#gradient)" />
+                    <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95" />
+                    <circle cx="20" cy="20" r="3" fill="white" />
                     <defs>
                         <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
-                            <stop offset="0%" stop-color="#00979D"/>
-                            <stop offset="100%" stop-color="#005F73"/>
+                            <stop offset="0%" stop-color="#00979D" />
+                            <stop offset="100%" stop-color="#005F73" />
                         </linearGradient>
                     </defs>
                 </svg>
@@ -36,7 +38,11 @@
                     <div class="password-input">
                         <input type="password" id="senha" name="senha" required placeholder="••••••••">
                         <button type="button" class="toggle-password" onclick="togglePassword('senha')">
-                            <span class="eye-icon">👁️</span>
+                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -63,18 +69,18 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const btnText = document.getElementById('btnText');
             const btnLoader = document.getElementById('btnLoader');
             const errorMessage = document.getElementById('errorMessage');
-            
+
             btnText.style.display = 'none';
             btnLoader.style.display = 'inline-block';
             errorMessage.style.display = 'none';
-            
+
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
-            
+
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -83,9 +89,9 @@
                     },
                     body: JSON.stringify({ email, senha })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.sucesso) {
                     window.location.href = '/';
                 } else {
@@ -103,4 +109,5 @@
         });
     </script>
 </body>
+
 </html>

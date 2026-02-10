@@ -171,6 +171,9 @@
             </div>
             <div class="modal-body">
                 <form id="cadastroKitForm" class="form-cadastro">
+                    <!-- Campo oculto para ID do Kit (usado na edição) -->
+                    <input type="hidden" id="kitIdEditar">
+                    
                     <div class="form-group">
                         <label for="nomeKit">Nome do Kit *</label>
                         <input type="text" id="nomeKit" required placeholder="Ex: Kit Arduino Robotica">
@@ -179,17 +182,26 @@
                     <div class="componentes-section">
                         <div class="section-header">
                             <h3>Componentes</h3>
-                            <button type="button" class="btn btn-secondary" onclick="adicionarComponente()">
-                                ➕ Adicionar Componente
-                            </button>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                Selecione os componentes do kit
+                            </div>
                         </div>
-                        <div id="componentesContainer"></div>
+                        
+                        <!-- Grid de Seleção -->
+                        <div class="component-selection-grid" id="componentSelectionGrid">
+                            <!-- Opções serão carregadas via JS -->
+                        </div>
+
+                        <!-- Lista de Selecionados -->
+                        <div id="selectedComponentsList" class="selected-components-list">
+                            <!-- Componentes selecionados aparecerão aqui -->
+                        </div>
                     </div>
                     
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="fecharModal('cadastroKitModal')">Cancelar</button>
                         <button type="submit" class="btn btn-primary">
-                            <span id="btnCadastroText">Cadastrar Kit</span>
+                            <span id="btnCadastroText">Salvar Kit</span>
                             <span id="btnCadastroLoader" class="loader" style="display: none;"></span>
                         </button>
                     </div>

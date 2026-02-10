@@ -63,57 +63,50 @@
       "id": "KIT002",
       "nome": "Kit Arduino Sensores",
       "status": "em-uso",
-      "ultima_atualizacao": "2026-02-09T20:19:39.053876",
+      "ultima_atualizacao": "2026-02-09T21:34:42.094156",
       "responsavel": "testes",
       "componentes": [
         {
           "nome": "Arduino Uno R3",
           "quantidade": 1,
-          "quantidade_esperada": 1,
-          "imagem": "arduino-uno.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "quantidade_esperada": 1
         },
         {
           "nome": "Sensor Ultrassônico HC-SR04",
           "quantidade": 1,
-          "quantidade_esperada": 1,
-          "imagem": "ultrasonic.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "quantidade_esperada": 1
         },
         {
           "nome": "Sensor DHT11",
           "quantidade": 1,
-          "quantidade_esperada": 1,
-          "imagem": "dht11.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "quantidade_esperada": 1
         },
         {
           "nome": "Display LCD 16x2",
           "quantidade": 1,
-          "quantidade_esperada": 1,
-          "imagem": "lcd.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "quantidade_esperada": 1
         },
         {
           "nome": "Servo Motor 9g",
           "quantidade": 2,
-          "quantidade_esperada": 2,
-          "imagem": "servo.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "quantidade_esperada": 2
         },
         {
           "nome": "Jumpers Fêmea-Macho",
-          "quantidade": 25,
-          "quantidade_esperada": 30,
-          "imagem": "jumper.svg",
-          "estado": "faltando"
+          "quantidade": 30,
+          "estado": "faltando",
+          "quantidade_esperada": 30
         },
         {
           "nome": "Resistores 10kΩ",
           "quantidade": 10,
-          "quantidade_esperada": 10,
-          "imagem": "resistor.svg",
-          "estado": "bom"
+          "estado": "bom",
+          "quantidade_esperada": 10
         }
       ],
       "historico": [
@@ -136,6 +129,12 @@
           "status": "em-uso",
           "responsavel": "testes",
           "observacao": ""
+        },
+        {
+          "data": "2026-02-09T21:34:42.094156",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
         }
       ]
     },

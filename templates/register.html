@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Arduino Kit Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 </head>
+
 <body>
     <div class="auth-container">
         <div class="auth-card">
             <div class="logo-container">
                 <svg width="60" height="60" viewBox="0 0 40 40" fill="none">
-                    <rect width="40" height="40" rx="10" fill="url(#gradient)"/>
-                    <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95"/>
-                    <circle cx="20" cy="20" r="3" fill="white"/>
+                    <rect width="40" height="40" rx="10" fill="url(#gradient)" />
+                    <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95" />
+                    <circle cx="20" cy="20" r="3" fill="white" />
                     <defs>
                         <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
-                            <stop offset="0%" stop-color="#00979D"/>
-                            <stop offset="100%" stop-color="#005F73"/>
+                            <stop offset="0%" stop-color="#00979D" />
+                            <stop offset="100%" stop-color="#005F73" />
                         </linearGradient>
                     </defs>
                 </svg>
@@ -41,25 +43,38 @@
                     <div class="password-input">
                         <input type="password" id="senha" name="senha" required placeholder="••••••••">
                         <button type="button" class="toggle-password" onclick="togglePassword('senha')">
-                            <span class="eye-icon">👁️</span>
+                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
                         </button>
                     </div>
-                    <small class="form-hint">Mínimo 8 caracteres</small>
-                </div>
 
-                <div class="password-suggestions">
-                    <button type="button" class="btn-secondary" onclick="gerarSugestoesSenha()">
-                        🔐 Gerar Senha Forte
-                    </button>
-                    <div id="senhasSugeridas" class="suggestions-list" style="display: none;"></div>
+                    <div class="password-strength">
+                        <div class="strength-item invalid" id="lengthCheck">
+                            <span class="strength-icon">✖</span> Mínimo 8 caracteres
+                        </div>
+                        <div class="strength-item invalid" id="numberCheck">
+                            <span class="strength-icon">✖</span> Pelo menos um número
+                        </div>
+                        <div class="strength-item invalid" id="upperCheck">
+                            <span class="strength-icon">✖</span> Pelo menos uma letra maiúscula
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="confirmarSenha">Confirmar Senha</label>
                     <div class="password-input">
-                        <input type="password" id="confirmarSenha" name="confirmarSenha" required placeholder="••••••••">
+                        <input type="password" id="confirmarSenha" name="confirmarSenha" required
+                            placeholder="••••••••">
                         <button type="button" class="toggle-password" onclick="togglePassword('confirmarSenha')">
-                            <span class="eye-icon">👁️</span>
+                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -80,65 +95,60 @@
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script>
-        async function gerarSugestoesSenha() {
-            try {
-                const response = await fetch('/api/auth/generate-passwords');
-                const data = await response.json();
-                
-                const container = document.getElementById('senhasSugeridas');
-                container.innerHTML = '';
-                
-                data.sugestoes.forEach(senha => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.innerHTML = `
-                        <code>${senha}</code>
-                        <button type="button" onclick="usarSenha('${senha}')" class="btn-usar">Usar</button>
-                    `;
-                    container.appendChild(div);
-                });
-                
-                container.style.display = 'block';
-            } catch (error) {
-                console.error('Erro ao gerar senhas:', error);
+        const senhaInput = document.getElementById('senha');
+        const lengthCheck = document.getElementById('lengthCheck');
+        const numberCheck = document.getElementById('numberCheck');
+        const upperCheck = document.getElementById('upperCheck');
+
+        function updateStrength(element, valid) {
+            const icon = element.querySelector('.strength-icon');
+            if (valid) {
+                element.classList.remove('invalid');
+                element.classList.add('valid');
+                icon.textContent = '✅';
+            } else {
+                element.classList.remove('valid');
+                element.classList.add('invalid');
+                icon.textContent = '✖';
             }
         }
-        
-        function usarSenha(senha) {
-            document.getElementById('senha').value = senha;
-            document.getElementById('confirmarSenha').value = senha;
-            document.getElementById('senhasSugeridas').style.display = 'none';
-        }
-        
+
+        senhaInput.addEventListener('input', () => {
+            const val = senhaInput.value;
+            updateStrength(lengthCheck, val.length >= 8);
+            updateStrength(numberCheck, /\d/.test(val));
+            updateStrength(upperCheck, /[A-Z]/.test(val));
+        });
+
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const btnText = document.getElementById('btnText');
             const btnLoader = document.getElementById('btnLoader');
             const errorMessage = document.getElementById('errorMessage');
-            
+
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             const confirmarSenha = document.getElementById('confirmarSenha').value;
-            
+
             // Validações
             if (senha.length < 8) {
                 errorMessage.textContent = 'A senha deve ter no mínimo 8 caracteres';
                 errorMessage.style.display = 'block';
                 return;
             }
-            
+
             if (senha !== confirmarSenha) {
                 errorMessage.textContent = 'As senhas não coincidem';
                 errorMessage.style.display = 'block';
                 return;
             }
-            
+
             btnText.style.display = 'none';
             btnLoader.style.display = 'inline-block';
             errorMessage.style.display = 'none';
-            
+
             try {
                 const response = await fetch('/api/auth/register', {
                     method: 'POST',
@@ -147,9 +157,9 @@
                     },
                     body: JSON.stringify({ nome, email, senha })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.sucesso) {
                     window.location.href = '/';
                 } else {
@@ -167,4 +177,5 @@
         });
     </script>
 </body>
+
 </html>
