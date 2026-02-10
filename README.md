@@ -340,12 +340,4 @@ Contribuições são bem-vindas!
 ## 📞 Suporte
 
 - **Issues:** Abra uma issue no GitHub
-- **Email:** [seu-email]
 - **Documentação:** Veja `INSTALACAO.md` para detalhes
-
----
-
-**Desenvolvido com ❤️ para facilitar o gerenciamento de kits Arduino**
-
-**Versão:** 2.0.0  
-**Última atualização:** Fevereiro 2025
