@@ -2,6 +2,9 @@ const API_BASE = '';
 let kitsData = [];
 let currentUser = null;
 let componentesSelecionados = [];
+let currentHistoryPage = 0;
+const HISTORY_ITEMS_PER_PAGE = 3;
+let pendingStatusChange = null;
 
 // Lista de Componentes Disponíveis
 const COMPONENTES_DISPONIVEIS = [
@@ -208,6 +211,7 @@ async function abrirDetalhesKit(kitId) {
             return;
         }
 
+        currentHistoryPage = 0; // Reset page
         mostrarModalKit(kit);
     } catch (error) {
         console.error('Erro ao carregar detalhes do kit:', error);
@@ -226,15 +230,21 @@ function mostrarModalKit(kit) {
         let statusClass = 'ok';
         let statusIcon = '✓';
 
+        if (comp.quantidade < comp.quantidade_esperada) {
+            statusClass = 'warning'; // Always warn if missing, regardless of declared status
+            statusIcon = '⚠';
+        }
+
         if (comp.estado === 'perdido') {
             statusClass = 'error';
             statusIcon = '✗';
         } else if (comp.estado === 'danificado') {
             statusClass = 'error';
-            statusIcon = '⚠';
-        } else if (comp.quantidade < comp.quantidade_esperada) {
-            statusClass = 'warning';
-            statusIcon = '⚠';
+            statusIcon = '✗';
+        } else if (comp.estado === 'usado') {
+            // Keep warning status if missing, otherwise mark as used
+            if (statusClass !== 'warning') statusClass = 'usado';
+            statusIcon = '⚠️';
         }
 
         const icon = getComponentIcon(comp.nome);
@@ -253,61 +263,28 @@ function mostrarModalKit(kit) {
         `;
     }).join('');
 
-    const historicoHTML = kit.historico && kit.historico.length > 0
-        ? kit.historico.map(h => `
-            <div class="ai-item">
-                <div>
-                    <strong>${h.acao}</strong> - ${h.responsavel || 'Sistema'}<br>
-                    <small>${new Date(h.data).toLocaleString('pt-BR')}</small><br>
-                    ${h.observacao ? `<em>${h.observacao}</em>` : ''}
-                </div>
-            </div>
-        `).join('')
-        : '<p style="color: var(--text-secondary);">Nenhum histórico registrado</p>';
+    // Ordena histórico por data (mais recente primeiro)
+    const historicoOrdenado = kit.historico ? [...kit.historico].reverse() : [];
 
+    // Renderiza
     modalBody.innerHTML = `
-        <div class="qr-code-container">
-            <img src="${kit.qr_code}" alt="QR Code ${kit.id}">
-            <p style="margin-top: 1rem; font-weight: 600;">${kit.id}</p>
-            <button class="btn-secondary" onclick="baixarQRCode('${kit.id}')">
-                ⬇️ Baixar QR Code
-            </button>
-        </div>
-        
-        <div style="margin: 2rem 0;">
+        <div style="margin: 1rem 0;">
             <h3 style="margin-bottom: 1rem;">📦 Componentes do Kit</h3>
             <div class="components-grid">
                 ${componentesHTML}
             </div>
         </div>
         
-        <div style="margin: 2rem 0;">
-            <h3 style="margin-bottom: 1rem;">📋 Informações</h3>
-            <div class="ai-card">
-                <p><strong>Status:</strong> ${traduzirStatus(kit.status)}</p>
-                <p><strong>Responsável:</strong> ${kit.responsavel || 'Nenhum'}</p>
-                <p><strong>Última Atualização:</strong> ${new Date(kit.ultima_atualizacao).toLocaleString('pt-BR')}</p>
-                ${kit.criado_por ? `<p><strong>Criado por:</strong> ${kit.criado_por}</p>` : ''}
-            </div>
-        </div>
-        
-        <div style="margin: 2rem 0;">
-            <h3 style="margin-bottom: 1rem;">📜 Histórico</h3>
-            <div class="ai-card">
-                ${historicoHTML}
-            </div>
-        </div>
-        
-        <div style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
-            <button class="btn btn-success" onclick="mudarStatus('${kit.id}', 'organizado')">
+        <div style="display: flex; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; justify-content: center;">
+            <button class="btn btn-success" onclick="confirmarStatusModal('${kit.id}', 'organizado')">
                 <span class="icon">✅</span>
                 Marcar como Organizado
             </button>
-            <button class="btn btn-warning" onclick="mudarStatus('${kit.id}', 'para-conferencia')">
+            <button class="btn btn-warning" onclick="confirmarStatusModal('${kit.id}', 'para-conferencia')">
                 <span class="icon">⚠️</span>
                 Enviar para Conferência
             </button>
-            <button class="btn btn-primary" onclick="mudarStatus('${kit.id}', 'em-uso')">
+            <button class="btn btn-primary" onclick="confirmarStatusModal('${kit.id}', 'em-uso')">
                 <span class="icon">🔧</span>
                 Marcar como Em Uso
             </button>
@@ -320,9 +297,93 @@ function mostrarModalKit(kit) {
                 Deletar Kit
             </button>
         </div>
+
+        <div style="margin: 2rem 0;">
+            <h3 style="margin-bottom: 1rem;">📋 Informações</h3>
+            <div class="ai-card">
+                <p><strong>Status:</strong> ${traduzirStatus(kit.status)}</p>
+                <p><strong>Responsável:</strong> ${kit.responsavel || 'Nenhum'}</p>
+                <p><strong>Última Atualização:</strong> ${new Date(kit.ultima_atualizacao).toLocaleString('pt-BR')}</p>
+                ${kit.criado_por ? `<p><strong>Criado por:</strong> ${kit.criado_por}</p>` : ''}
+            </div>
+        </div>
+        
+        <div style="margin: 2rem 0;">
+            <h3 style="margin-bottom: 1rem;">📜 Histórico</h3>
+            <div class="ai-card" id="historyContainer">
+                <!-- Histórico carregado via JS -->
+            </div>
+            <div class="pagination-controls" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+                <button class="btn-secondary btn-sm" onclick="mudarPaginaHistorico(-1)" id="btnPrevHistory">⬅️ Anterior</button>
+                <span id="historyPageIndicator" style="align-self: center;">Página 1</span>
+                <button class="btn-secondary btn-sm" onclick="mudarPaginaHistorico(1)" id="btnNextHistory">Próxima ➡️</button>
+            </div>
+        </div>
+
+        <div class="qr-code-container" style="margin-top: 3rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+            <h3 style="margin-bottom: 1rem;">📱 QR Code</h3>
+            <img src="${kit.qr_code}" alt="QR Code ${kit.id}">
+            <p style="margin-top: 1rem; font-weight: 600;">${kit.id}</p>
+            <button class="btn-secondary" onclick="baixarQRCode('${kit.id}')">
+                ⬇️ Baixar QR Code
+            </button>
+        </div>
     `;
 
+    // Renderiza a primeira página do histórico
+    window.currentKitHistorico = historicoOrdenado; // Guarda para paginação
+    renderizarPaginaHistorico();
+
     modal.classList.add('active');
+}
+
+function renderizarPaginaHistorico() {
+    const container = document.getElementById('historyContainer');
+    const btnPrev = document.getElementById('btnPrevHistory');
+    const btnNext = document.getElementById('btnNextHistory');
+    const indicator = document.getElementById('historyPageIndicator');
+
+    if (!window.currentKitHistorico || window.currentKitHistorico.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary);">Nenhum histórico registrado</p>';
+        btnPrev.style.display = 'none';
+        btnNext.style.display = 'none';
+        indicator.style.display = 'none';
+        return;
+    }
+
+    const totalPages = Math.ceil(window.currentKitHistorico.length / HISTORY_ITEMS_PER_PAGE);
+
+    // Validate page
+    if (currentHistoryPage < 0) currentHistoryPage = 0;
+    if (currentHistoryPage >= totalPages) currentHistoryPage = totalPages - 1;
+
+    const start = currentHistoryPage * HISTORY_ITEMS_PER_PAGE;
+    const end = start + HISTORY_ITEMS_PER_PAGE;
+    const items = window.currentKitHistorico.slice(start, end);
+
+    container.innerHTML = items.map(h => `
+        <div class="ai-item">
+            <div>
+                <strong>${h.acao}</strong> - ${h.responsavel || 'Sistema'}<br>
+                <small>${new Date(h.data).toLocaleString('pt-BR')}</small><br>
+                ${h.observacao ? `<em>${h.observacao}</em>` : ''}
+            </div>
+        </div>
+    `).join('');
+
+    // Update controls
+    indicator.textContent = `Página ${currentHistoryPage + 1} de ${totalPages}`;
+    btnPrev.disabled = currentHistoryPage === 0;
+    btnNext.disabled = currentHistoryPage === totalPages - 1;
+
+    btnPrev.style.display = 'inline-block';
+    btnNext.style.display = 'inline-block';
+    indicator.style.display = 'inline-block';
+}
+
+function mudarPaginaHistorico(delta) {
+    currentHistoryPage += delta;
+    renderizarPaginaHistorico();
 }
 
 async function baixarQRCode(kitId) {
@@ -354,9 +415,34 @@ document.querySelectorAll('.modal').forEach(modal => {
     });
 });
 
-async function mudarStatus(kitId, novoStatus) {
-    const observacao = prompt('Observação (opcional):') || '';
+function confirmarStatusModal(kitId, novoStatus) {
+    pendingStatusChange = { kitId, novoStatus };
+    document.getElementById('statusObservacao').value = '';
 
+    const mapStatus = {
+        'em-uso': '🔧 Em Uso',
+        'para-conferencia': '⚠️ Para Conferência',
+        'organizado': '✅ Organizado'
+    };
+
+    document.getElementById('statusConfirmMessage').textContent = `Deseja mudar o status para "${mapStatus[novoStatus]}"?`;
+    document.getElementById('statusConfirmModal').classList.add('active');
+}
+
+async function confirmarMudancaStatus() {
+    if (!pendingStatusChange) return;
+
+    const obs = document.getElementById('statusObservacao').value;
+    const { kitId, novoStatus } = pendingStatusChange;
+
+    // Call original logic but passed arguments
+    await executarMudancaStatus(kitId, novoStatus, obs);
+
+    fecharModal('statusConfirmModal');
+    pendingStatusChange = null;
+}
+
+async function executarMudancaStatus(kitId, novoStatus, observacao) {
     try {
         const response = await fetch(`${API_BASE}/api/kit/${kitId}/status`, {
             method: 'PUT',
@@ -373,7 +459,8 @@ async function mudarStatus(kitId, novoStatus) {
         const result = await response.json();
 
         if (result.sucesso) {
-            alert('Status atualizado com sucesso!');
+            // Remove alert and use modal update or notification if desired
+            // For now, just refresh
             fecharModal('kitModal');
             carregarEstatisticas();
             carregarKits();
@@ -721,7 +808,7 @@ function getComponentIcon(nome) {
         'Protoboard': '📟',
         'Breadboard': '📟',
         'LED': '💡',
-        'Resistor': '🔴',
+        'Resistor': '⚡',
         'Jumper': '📎',
         'Push Button': '🔘',
         'Button': '🔘',

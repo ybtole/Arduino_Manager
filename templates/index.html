@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arduino Kit Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
@@ -13,13 +15,13 @@
             <div class="header-content">
                 <div class="logo">
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                        <rect width="40" height="40" rx="10" fill="url(#gradient)"/>
-                        <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95"/>
-                        <circle cx="20" cy="20" r="3" fill="white"/>
+                        <rect width="40" height="40" rx="10" fill="url(#gradient)" />
+                        <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95" />
+                        <circle cx="20" cy="20" r="3" fill="white" />
                         <defs>
                             <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
-                                <stop offset="0%" stop-color="#00979D"/>
-                                <stop offset="100%" stop-color="#005F73"/>
+                                <stop offset="0%" stop-color="#00979D" />
+                                <stop offset="100%" stop-color="#005F73" />
                             </linearGradient>
                         </defs>
                     </svg>
@@ -28,7 +30,7 @@
                         <p class="subtitle">Sistema de Gerenciamento de Kits</p>
                     </div>
                 </div>
-                
+
                 <div class="header-actions">
                     <!-- Info do Usuário -->
                     <div class="user-info" id="userInfo">
@@ -40,18 +42,18 @@
                             <div class="user-email" id="userEmail">carregando@email.com</div>
                         </div>
                     </div>
-                    
+
                     <!-- Botão Cadastrar Kit -->
                     <button class="btn btn-primary" onclick="abrirModalCadastroKit()">
                         <span class="icon">➕</span>
                         Cadastrar Kit
                     </button>
-                    
+
                     <!-- Botão Logout -->
                     <button class="btn-logout" onclick="fazerLogout()" title="Sair">
                         🚪
                     </button>
-                    
+
                     <!-- Toggle Tema -->
                     <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
                         <span class="sun-icon">☀️</span>
@@ -64,7 +66,7 @@
 
     <main class="main-content">
         <div class="container">
-            
+
             <!-- Scanner Section -->
             <section class="scanner-section card">
                 <h2>📱 Scanner de QR Code</h2>
@@ -117,7 +119,7 @@
                         </div>
                         <div class="column-content" id="columnEmUso"></div>
                     </div>
-                    
+
                     <div class="kanban-column">
                         <div class="column-header para-conferencia">
                             <h3>⚠️ Para Conferência</h3>
@@ -125,7 +127,7 @@
                         </div>
                         <div class="column-content" id="columnParaConferencia"></div>
                     </div>
-                    
+
                     <div class="kanban-column">
                         <div class="column-header organizado">
                             <h3>✅ Organizado</h3>
@@ -173,12 +175,12 @@
                 <form id="cadastroKitForm" class="form-cadastro">
                     <!-- Campo oculto para ID do Kit (usado na edição) -->
                     <input type="hidden" id="kitIdEditar">
-                    
+
                     <div class="form-group">
                         <label for="nomeKit">Nome do Kit *</label>
                         <input type="text" id="nomeKit" required placeholder="Ex: Kit Arduino Robotica">
                     </div>
-                    
+
                     <div class="componentes-section">
                         <div class="section-header">
                             <h3>Componentes</h3>
@@ -186,7 +188,7 @@
                                 Selecione os componentes do kit
                             </div>
                         </div>
-                        
+
                         <!-- Grid de Seleção -->
                         <div class="component-selection-grid" id="componentSelectionGrid">
                             <!-- Opções serão carregadas via JS -->
@@ -197,15 +199,41 @@
                             <!-- Componentes selecionados aparecerão aqui -->
                         </div>
                     </div>
-                    
+
                     <div class="form-actions">
-                        <button type="button" class="btn-secondary" onclick="fecharModal('cadastroKitModal')">Cancelar</button>
+                        <button type="button" class="btn-secondary"
+                            onclick="fecharModal('cadastroKitModal')">Cancelar</button>
                         <button type="submit" class="btn btn-primary">
                             <span id="btnCadastroText">Salvar Kit</span>
                             <span id="btnCadastroLoader" class="loader" style="display: none;"></span>
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Status -->
+    <div id="statusConfirmModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>📝 Atualizar Status</h2>
+                <button class="close-btn" onclick="fecharModal('statusConfirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="statusConfirmMessage" style="margin-bottom: 1rem;">Deseja confirmar a alteração de status?</p>
+
+                <div class="form-group">
+                    <label for="statusObservacao">Observação (Opcional)</label>
+                    <textarea id="statusObservacao" rows="3" placeholder="Ex: Kit entregue ao aluno X..."></textarea>
+                </div>
+
+                <div class="form-actions" style="justify-content: space-between;">
+                    <button class="btn-secondary" onclick="fecharModal('statusConfirmModal')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="confirmarMudancaStatus()">
+                        Confirmar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -226,4 +254,5 @@
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
+
 </html>

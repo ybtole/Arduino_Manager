@@ -182,7 +182,7 @@
       "id": "KIT003",
       "nome": "Kit Arduino Avançado",
       "status": "para-conferencia",
-      "ultima_atualizacao": "2026-02-09T22:13:23.992918",
+      "ultima_atualizacao": "2026-02-09T22:23:29.054047",
       "responsavel": "testes",
       "componentes": [
         {
@@ -196,7 +196,7 @@
         {
           "nome": "Módulo WiFi ESP8266",
           "customName": null,
-          "quantidade": 1,
+          "quantidade": 0,
           "quantidade_esperada": 1,
           "estado": "bom",
           "imagem": ""
@@ -228,9 +228,9 @@
         {
           "nome": "Matriz LED 8x8",
           "customName": null,
-          "quantidade": 0,
+          "quantidade": 1,
           "quantidade_esperada": 1,
-          "estado": "danificado",
+          "estado": "bom",
           "imagem": ""
         },
         {
@@ -339,8 +339,59 @@
           "status": "para-conferencia",
           "responsavel": "testes",
           "observacao": "asd"
+        },
+        {
+          "data": "2026-02-09T22:17:39.230750",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:23:10.000596",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:23:21.410832",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-09T22:23:29.054047",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
         }
       ]
+    },
+    {
+      "id": "KIT005",
+      "nome": "asdsa",
+      "status": "organizado",
+      "ultima_atualizacao": "2026-02-09T22:31:30.470453",
+      "responsavel": "",
+      "componentes": [
+        {
+          "nome": "LED Amarelo",
+          "customName": null,
+          "quantidade": 1,
+          "quantidade_esperada": 1,
+          "estado": "bom",
+          "imagem": ""
+        }
+      ],
+      "historico": [
+        {
+          "data": "2026-02-09T22:31:30.470453",
+          "acao": "criacao",
+          "responsavel": "testes",
+          "observacao": "Kit criado"
+        }
+      ],
+      "criado_por": "testes",
+      "criado_em": "2026-02-09T22:31:30.470453"
     }
   ]
 }
