@@ -1,26 +1,2 @@
 {
-  "1": {
-    "nome": "testes",
-    "email": "admin@sistema.com",
-    "senha_hash": "scrypt:32768:8:1$iBiG1Dr9FtnLOOQ8$132cae78e49edfb3ffd73eacc355064d1382eb02dac1a755b919895a01cb6b06d59003cbef1ae7faabe5c07ca6217d2d8009b5ff76bc11cc9535f2e52846110b",
-    "data_cadastro": "2026-02-09T20:14:40.677061"
-  },
-  "2": {
-    "nome": "Guilherme Duarte",
-    "email": "vinicius.macedo242643@gmail.com",
-    "senha_hash": "scrypt:32768:8:1$8iI1sj2hnRxTQ36z$a76124a00a9bd5a76c4d07e2e7a42a531f581375f4747570c9a1196bb279968eda7ffbd8f6d48192c3505cce35bc471c8eba1e037060d14a1584e67242548ca7",
-    "data_cadastro": "2026-02-09T20:30:33.122863"
-  },
-  "3": {
-    "nome": "testes",
-    "email": "teste@gmail.com",
-    "senha_hash": "scrypt:32768:8:1$0KFDWQ2avdfYyLRD$a83490b1123764d64caafa527bb4ee3e356679306d6ea713f268054c8c70aced41d9d3bf67d7f3b36f91a023db5e494f566ef850e36ea0b5aad43882d21b296c",
-    "data_cadastro": "2026-02-10T00:00:06.377420"
-  },
-  "4": {
-    "nome": "adsadsas",
-    "email": "asd@gmail.com",
-    "senha_hash": "scrypt:32768:8:1$6pcORzvvdjDJR6OL$e1b9c75b4853f84be93c33761d1e8d79a32fee55af3e5248222e692f81a76c5a4988f253e9609b780919cd8d1416505baa931e47e57f599da1f19c61f36accda",
-    "data_cadastro": "2026-02-10T00:00:26.596446"
-  }
 }
