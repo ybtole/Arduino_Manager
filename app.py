@@ -266,7 +266,8 @@ def api_forgot_password():
     return jsonify({
         'sucesso': True,
         'mensagem': 'Email de recuperação enviado!',
-        'reset_link': reset_link  # Em produção, isso seria enviado por email
+        'reset_link': reset_link,
+        'token': token  # Return token explicitly for frontend use
     })
 
 @app.route('/api/auth/reset-password', methods=['POST'])

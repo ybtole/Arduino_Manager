@@ -1038,3 +1038,124 @@ section h2 {
     gap: 1rem;
     padding: 1rem;
 }
+
+/* ===== PAGINATION CONTROLS ===== */
+.pagination-controls-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.pagination-select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.pagination-jump {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.input-jump {
+    width: 60px;
+    padding: 0.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+/* ===== NEW PASSWORD STRENGTH (Registration & Reset) ===== */
+.password-strength-container {
+    margin-top: 1rem;
+}
+
+.strength-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.strength-bar-bg {
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.strength-bar-fill {
+    height: 100%;
+    width: 0;
+    transition: all 0.4s ease;
+}
+
+.strength-bar-fill.bg-red-500 {
+    background-color: var(--color-danger);
+}
+
+.strength-bar-fill.bg-yellow-500 {
+    background-color: var(--color-warning);
+}
+
+.strength-bar-fill.bg-emerald-500 {
+    background-color: var(--color-success);
+}
+
+.strength-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.text-red-500 {
+    color: var(--color-danger);
+}
+
+.text-yellow-500 {
+    color: var(--color-warning);
+}
+
+.text-emerald-500 {
+    color: var(--color-success);
+}
+
+.strength-checks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.check-item.valid {
+    color: var(--color-success);
+}
+
+.check-item .icon {
+    font-size: 0.9rem;
+}

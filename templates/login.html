@@ -4,51 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Arduino Kit Manager</title>
+    <title>Entrar - Arduino Kit Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <!-- Usando Phosphor Icons para um visual moderno similar ao screenshot -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 
 <body>
     <div class="auth-container">
         <div class="auth-card">
-            <div class="logo-container">
-                <svg width="60" height="60" viewBox="0 0 40 40" fill="none">
-                    <rect width="40" height="40" rx="10" fill="url(#gradient)" />
-                    <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="white" opacity="0.95" />
-                    <circle cx="20" cy="20" r="3" fill="white" />
-                    <defs>
-                        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
-                            <stop offset="0%" stop-color="#00979D" />
-                            <stop offset="100%" stop-color="#005F73" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <h1>Arduino Kit Manager</h1>
-                <p>Faça login para acessar o sistema</p>
+            <div class="auth-header">
+                <h1>Entrar</h1>
+                <p>Entre com suas credenciais para acessar o sistema</p>
             </div>
 
-            <form id="loginForm" class="auth-form">
+            <form id="loginForm">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                    <div class="input-wrapper">
+                        <i class="ph ph-envelope-simple input-icon"></i>
+                        <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="senha">Senha</label>
-                    <div class="password-input">
+                    <div class="input-wrapper password-input">
+                        <i class="ph ph-lock-simple input-icon"></i>
                         <input type="password" id="senha" name="senha" required placeholder="••••••••">
                         <button type="button" class="toggle-password" onclick="togglePassword('senha')">
-                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
+                            <i class="ph ph-eye"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="form-footer">
-                    <a href="{{ url_for('forgot_password') }}" class="link">Esqueceu a senha?</a>
+                <div class="forgot-password">
+                    <a href="#" class="link" onclick="mostrarModalRecuperar(event)"
+                        style="font-size: 0.9rem; color: var(--text-secondary); font-weight: normal;">Esqueceu a
+                        senha?</a>
                 </div>
 
                 <button type="submit" class="btn btn-primary">
@@ -56,37 +49,81 @@
                     <span id="btnLoader" class="loader" style="display: none;"></span>
                 </button>
 
-                <div id="errorMessage" class="error-message" style="display: none;"></div>
-            </form>
+                <div id="errorMessage" class="message error-message"></div>
 
-            <div class="auth-footer">
-                <p>Não tem uma conta? <a href="{{ url_for('register') }}" class="link-primary">Cadastre-se</a></p>
+                <div class="auth-footer">
+                    <p>Não tem uma conta? <a href="/register" class="link">Cadastre-se</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Recuperação Beautified -->
+    <div id="modalRecuperar" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Recuperar Senha</h3>
+            <p>Digite seu email abaixo e geraremos um link de redefinição para você.</p>
+            <div id="errorRecuperar" class="match-indicator no-match"
+                style="display: none; justify-content: center; margin-bottom: 1rem;">
+                <i class="ph ph-warning-circle"></i> Por favor, insira o email
             </div>
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <i class="ph ph-envelope-simple input-icon"></i>
+                    <input type="email" id="emailRecuperar" placeholder="seu@email.com">
+                </div>
+            </div>
+            <div id="boxLinkReset" class="reset-link-box" style="display: none;">
+                <div class="reset-link-input-wrapper">
+                    <input type="text" id="linkReset" readonly>
+                </div>
+                <div class="btn-group-recovery">
+                    <button class="btn-recovery-action btn-copy" onclick="copiarLink()">
+                        <i class="ph ph-copy"></i> Copiar
+                    </button>
+                    <button class="btn-recovery-action btn-go" onclick="irParaLink()">
+                        <i class="ph ph-arrow-square-out"></i> Ir para o Link
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="btnGerarLink" onclick="gerarLinkReset()" style="margin-top: 1rem;">
+                Gerar Link de Redefinição
+            </button>
+            <button class="btn-close-modal" onclick="fecharModalRecuperar()">Fechar</button>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script>
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const icon = event.currentTarget.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'ph ph-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'ph ph-eye';
+            }
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const btnText = document.getElementById('btnText');
             const btnLoader = document.getElementById('btnLoader');
             const errorMessage = document.getElementById('errorMessage');
+
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
 
             btnText.style.display = 'none';
             btnLoader.style.display = 'inline-block';
             errorMessage.style.display = 'none';
 
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, senha })
                 });
 
@@ -95,18 +132,68 @@
                 if (data.sucesso) {
                     window.location.href = '/';
                 } else {
-                    errorMessage.textContent = data.mensagem || 'Erro ao fazer login';
+                    errorMessage.textContent = data.mensagem;
                     errorMessage.style.display = 'block';
                     btnText.style.display = 'inline';
                     btnLoader.style.display = 'none';
                 }
             } catch (error) {
-                errorMessage.textContent = 'Erro ao conectar com o servidor';
+                errorMessage.textContent = 'Erro de conexão';
                 errorMessage.style.display = 'block';
                 btnText.style.display = 'inline';
                 btnLoader.style.display = 'none';
             }
         });
+
+        function mostrarModalRecuperar(e) {
+            e.preventDefault();
+            document.getElementById('modalRecuperar').style.display = 'flex';
+        }
+        function fecharModalRecuperar() {
+            document.getElementById('modalRecuperar').style.display = 'none';
+            document.getElementById('errorRecuperar').style.display = 'none';
+            document.getElementById('emailRecuperar').value = '';
+        }
+        async function gerarLinkReset() {
+            const email = document.getElementById('emailRecuperar').value;
+            const errorElement = document.getElementById('errorRecuperar');
+
+            if (!email) {
+                errorElement.style.display = 'flex';
+                return;
+            }
+            errorElement.style.display = 'none';
+
+            const res = await fetch('/api/auth/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            if (data.sucesso) {
+                document.getElementById('linkReset').value = `${window.location.origin}/reset-password/${data.token}`;
+                document.getElementById('boxLinkReset').style.display = 'flex';
+                document.getElementById('btnGerarLink').style.display = 'none';
+            } else {
+                alert(data.mensagem);
+            }
+        }
+        async function copiarLink() {
+            const link = document.getElementById('linkReset');
+            link.select();
+            document.execCommand('copy');
+            const btn = document.querySelector('.btn-copy');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-check"></i> Copiado!';
+            setTimeout(() => btn.innerHTML = originalText, 2000);
+        }
+
+        function irParaLink() {
+            const link = document.getElementById('linkReset').value;
+            if (link) {
+                window.location.href = link;
+            }
+        }
     </script>
 </body>
 

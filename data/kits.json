@@ -189,7 +189,7 @@
       "id": "KIT003",
       "nome": "Kit Arduino Avançado",
       "status": "organizado",
-      "ultima_atualizacao": "2026-02-09T22:59:14.377690",
+      "ultima_atualizacao": "2026-02-10T00:15:03.113489",
       "responsavel": "testes",
       "componentes": [
         {
@@ -203,7 +203,7 @@
         {
           "nome": "Módulo WiFi ESP8266",
           "customName": null,
-          "quantidade": 0,
+          "quantidade": 1,
           "quantidade_esperada": 1,
           "estado": "bom",
           "imagem": ""
@@ -389,6 +389,12 @@
           "acao": "edicao",
           "responsavel": "testes",
           "observacao": "Kit editado"
+        },
+        {
+          "data": "2026-02-10T00:15:03.113489",
+          "acao": "edicao",
+          "responsavel": "testes",
+          "observacao": "Kit editado"
         }
       ]
     },
@@ -396,8 +402,8 @@
       "id": "KIT004",
       "nome": "Testes",
       "status": "organizado",
-      "ultima_atualizacao": "2026-02-09T23:00:09.702554",
-      "responsavel": "",
+      "ultima_atualizacao": "2026-02-10T00:03:23.457378",
+      "responsavel": "testes",
       "componentes": [
         {
           "nome": "LED Amarelo",
@@ -414,6 +420,20 @@
           "acao": "criacao",
           "responsavel": "testes",
           "observacao": "Kit criado"
+        },
+        {
+          "data": "2026-02-10T00:03:18.339997",
+          "acao": "mudanca_status",
+          "status": "em-uso",
+          "responsavel": "testes",
+          "observacao": ""
+        },
+        {
+          "data": "2026-02-10T00:03:23.457378",
+          "acao": "mudanca_status",
+          "status": "organizado",
+          "responsavel": "testes",
+          "observacao": ""
         }
       ],
       "criado_por": "testes",

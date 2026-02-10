@@ -91,8 +91,6 @@ function atualizarInfoUsuario() {
 }
 
 async function fazerLogout() {
-    if (!confirm('Deseja realmente sair?')) return;
-
     try {
         await fetch(`${API_BASE}/api/auth/logout`, {
             method: 'POST'
